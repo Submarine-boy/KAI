@@ -350,15 +350,12 @@ composer.addEventListener(
 
         event.preventDefault();
 
-
         const message =
             messageInput.value.trim();
-
 
         if (!message) {
             return;
         }
-
 
         if (!currentUser) {
 
@@ -370,20 +367,17 @@ composer.addEventListener(
         }
 
 
-        /*
-         * Create a new chat if this
-         * is the first message.
-         */
+        /* =========================
+           CREATE CHAT
+        ========================= */
 
         if (!currentChatId) {
 
             const title =
                 createChatTitle(message);
 
-
             const chat =
                 await createChat(title);
-
 
             if (!chat) {
 
@@ -396,6 +390,10 @@ composer.addEventListener(
         }
 
 
+        /* =========================
+           CLEAR INPUT
+        ========================= */
+
         messageInput.value = "";
 
         autoResize();
@@ -403,39 +401,102 @@ composer.addEventListener(
         hideWelcome();
 
 
-        /* Save USER message */
+        /* =========================
+           SAVE USER MESSAGE
+        ========================= */
 
         const savedUserMessage =
-            await saveUserMessage(
-                message
-            );
-
+            await saveUserMessage(message);
 
         if (!savedUserMessage) {
             return;
         }
 
 
+        /* =========================
+           SHOW TYPING
+        ========================= */
+
         showTypingIndicator();
 
 
-        await wait(700);
+        try {
+
+            /* =========================
+               PREPARE CONVERSATION
+            ========================= */
+
+            const conversation =
+                messages.map(message => ({
+                    role: message.role,
+                    content: message.content
+                }));
 
 
-        removeTypingIndicator();
+            /* =========================
+               CALL NOVAAI
+            ========================= */
 
-
-        const response =
-            generateDemoResponse(
-                message
+            const {
+                data,
+                error
+            } = await supabase.functions.invoke(
+                "nova-ai",
+                {
+                    body: {
+                        messages: conversation
+                    }
+                }
             );
 
 
-        /* Save ASSISTANT message */
+            if (error) {
+                throw error;
+            }
 
-        await saveAssistantMessage(
-            response
-        );
+
+            if (!data?.response) {
+
+                throw new Error(
+                    "NovaAI returned no response."
+                );
+            }
+
+
+            /* =========================
+               REMOVE TYPING
+            ========================= */
+
+            removeTypingIndicator();
+
+
+            /* =========================
+               SAVE AI RESPONSE
+            ========================= */
+
+            await saveAssistantMessage(
+                data.response
+            );
+
+
+        } catch (error) {
+
+            removeTypingIndicator();
+
+            console.error(
+                "NOVAAI ERROR:",
+                error
+            );
+
+
+            const errorMessage =
+                "Sorry, I couldn't connect to NovaAI right now. Please try again.";
+
+
+            await saveAssistantMessage(
+                errorMessage
+            );
+        }
     }
 );
 
@@ -814,50 +875,6 @@ function removeTypingIndicator() {
         typing.remove();
     }
 }
-
-
-/* =========================
-   DEMO AI RESPONSE
-========================= */
-
-function generateDemoResponse(message) {
-
-    const text =
-        message.toLowerCase();
-
-
-    if (
-        text.includes("hello") ||
-        text.includes("hi")
-    ) {
-
-        return "Hello! I'm NovaAI. I'm ready to help you.";
-    }
-
-
-    if (
-        text.includes("code") ||
-        text.includes("website") ||
-        text.includes("program")
-    ) {
-
-        return "I'd be happy to help you with that. The NovaAI chat system is now saving your conversation. The next step is connecting the actual AI model.";
-    }
-
-
-    if (
-        text.includes(
-            "what can you do"
-        )
-    ) {
-
-        return "I can help with learning, writing, coding, brainstorming, analysis, problem solving, and many other tasks.";
-    }
-
-
-    return "Your message has been saved successfully. The NovaAI interface is working, and we're ready to connect the real AI model.";
-}
-
 
 /* =========================
    SUGGESTIONS
