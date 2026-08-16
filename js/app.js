@@ -441,7 +441,7 @@ composer.addEventListener(
                 data,
                 error
             } = await supabase.functions.invoke(
-                "nova-ai",
+                "swift-task",
                 {
                     body: {
                         messages: conversation
