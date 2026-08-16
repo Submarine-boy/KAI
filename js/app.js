@@ -839,7 +839,7 @@ async function typeAssistantMessage(message) {
         currentText += character;
 
         messageElement.innerHTML =
-            escapeHTML(currentText);
+            marked.parse(currentText);
 
         scrollToBottom();
 
