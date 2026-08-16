@@ -1614,3 +1614,36 @@ button {
         padding-bottom: 5px;
     }
 }
+
+
+.assistant-message {
+    overflow-wrap: anywhere;
+}
+
+.assistant-message table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    overflow: hidden;
+    border-radius: 8px;
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.assistant-message th,
+.assistant-message td {
+    padding: 10px 12px;
+    border: 1px solid rgba(128, 128, 128, 0.25);
+    text-align: left;
+    vertical-align: top;
+}
+
+.assistant-message th {
+    font-weight: 600;
+}
+
+.assistant-message tr:nth-child(even) {
+    background: rgba(128, 128, 128, 0.06);
+}
