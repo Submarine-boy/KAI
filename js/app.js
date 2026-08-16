@@ -422,15 +422,18 @@ composer.addEventListener(
 
         try {
 
-            /* =========================
+           /* =========================
                PREPARE CONVERSATION
+               Send only the latest 30 messages
             ========================= */
-
+            
             const conversation =
-                messages.map(message => ({
-                    role: message.role,
-                    content: message.content
-                }));
+                messages
+                    .slice(-30)
+                    .map(message => ({
+                        role: message.role,
+                        content: message.content
+                    }));
 
 
             /* =========================
@@ -479,24 +482,19 @@ composer.addEventListener(
             );
 
 
-        } catch (error) {
+       } catch (error) {
 
             removeTypingIndicator();
 
             console.error(
-                "NOVAAI ERROR:",
-                error
-            );
+              "NOVAAI ERROR:",
+                 error
+             );
 
-
-            const errorMessage =
-                "Sorry, I couldn't connect to NovaAI right now. Please try again.";
-
-
-            await saveAssistantMessage(
-                errorMessage
-            );
-        }
+            addAssistantMessage(
+              "Sorry, I couldn't connect to NovaAI right now. Please try again."
+          );
+      }
     }
 );
 
