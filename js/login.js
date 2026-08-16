@@ -37,3 +37,21 @@ loginForm.addEventListener("submit", async (event) => {
         submitButton.innerHTML = "Log in <span>→</span>";
     }
 });
+
+const googleButton = document.querySelector("#google-login");
+
+googleButton?.addEventListener("click", async () => {
+
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo:
+                `${window.location.origin}/NovaAI/nova.html`
+        }
+    });
+
+    if (error) {
+        console.error("Google login error:", error);
+        alert(error.message);
+    }
+});
