@@ -780,8 +780,7 @@ function addUserMessage(message) {
 ========================= */
 function addAssistantMessage(message) {
 
-    const wrapper =
-        document.createElement("div");
+    const wrapper = document.createElement("div");
 
     wrapper.className =
         "message-wrapper assistant-message-wrapper";
@@ -794,16 +793,20 @@ function addAssistantMessage(message) {
         <div class="message assistant-message"></div>
     `;
 
+    const messageElement =
+        wrapper.querySelector(".assistant-message");
+
+    if (typeof marked !== "undefined") {
+        messageElement.innerHTML =
+            marked.parse(message);
+    } else {
+        messageElement.textContent = message;
+    }
+
     chatArea.insertBefore(
         wrapper,
         document.querySelector(".composer-container")
     );
-
-    const messageElement =
-        wrapper.querySelector(".assistant-message");
-
-    messageElement.innerHTML =
-        escapeHTML(message);
 
     scrollToBottom();
 }
