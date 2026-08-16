@@ -45,8 +45,7 @@ googleButton?.addEventListener("click", async () => {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo:
-                `${window.location.origin}/NovaAI/nova.html`
+            redirectTo: `${window.location.origin}/nova.html`
         }
     });
 
