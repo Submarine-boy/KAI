@@ -477,9 +477,10 @@ composer.addEventListener(
                SAVE AI RESPONSE
             ========================= */
 
-            await saveAssistantMessage(
-                data.response
-            );
+           await saveAssistantMessage(
+              data.response,
+              true
+           );
 
 
        } catch (error) {
@@ -547,9 +548,9 @@ async function saveUserMessage(message) {
 ========================= */
 
 async function saveAssistantMessage(
-    message
+    message,
+    animate = false
 ) {
-
     const {
         data,
         error
@@ -578,9 +579,20 @@ async function saveAssistantMessage(
 
     messages.push(data);
 
-    addAssistantMessage(message);
+if (animate) {
 
-    await updateChatTimestamp();
+    await typeAssistantMessage(
+        message
+    );
+
+} else {
+
+    addAssistantMessage(
+        message
+    );
+}
+
+await updateChatTimestamp();
 
 
     return data;
@@ -766,41 +778,77 @@ function addUserMessage(message) {
 /* =========================
    DISPLAY ASSISTANT MESSAGE
 ========================= */
-
-function addAssistantMessage(
-    message
-) {
+function addAssistantMessage(message) {
 
     const wrapper =
         document.createElement("div");
 
-
     wrapper.className =
         "message-wrapper assistant-message-wrapper";
-
 
     wrapper.innerHTML = `
         <div class="assistant-avatar">
             ✦
         </div>
 
-        <div class="message assistant-message">
-            ${escapeHTML(message)}
-        </div>
+        <div class="message assistant-message"></div>
     `;
-
 
     chatArea.insertBefore(
         wrapper,
-        document.querySelector(
-            ".composer-container"
-        )
+        document.querySelector(".composer-container")
     );
 
+    const messageElement =
+        wrapper.querySelector(".assistant-message");
+
+    messageElement.innerHTML =
+        escapeHTML(message);
 
     scrollToBottom();
 }
 
+async function typeAssistantMessage(message) {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message-wrapper assistant-message-wrapper";
+
+    wrapper.innerHTML = `
+        <div class="assistant-avatar">
+            ✦
+        </div>
+
+        <div class="message assistant-message"></div>
+    `;
+
+    chatArea.insertBefore(
+        wrapper,
+        document.querySelector(".composer-container")
+    );
+
+    const messageElement =
+        wrapper.querySelector(".assistant-message");
+
+    let currentText = "";
+
+    for (const character of message) {
+
+        currentText += character;
+
+        messageElement.innerHTML =
+            escapeHTML(currentText);
+
+        scrollToBottom();
+
+        await new Promise(
+            resolve =>
+                setTimeout(resolve, 15)
+        );
+    }
+}
 
 /* =========================
    CLEAR MESSAGES
