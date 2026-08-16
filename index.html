@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NovaAI</title>
+
+    <link rel="stylesheet" href="index.css">
+
+    <!-- Authentication protection -->
+    <script
+        type="module"
+        src="js/auth-guard.js"
+    ></script>
+
+</head>
+
+
+<body>
+
+    <div class="app">
+
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-top">
+
+                <div class="sidebar-header">
+
+                    <a href="home.html" class="logo">
+
+                        <span class="logo-icon">✦</span>
+
+                        <span>NovaAI</span>
+
+                    </a>
+
+                    <button
+                        class="close-sidebar"
+                        aria-label="Close sidebar"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <button class="new-chat">
+
+                    <span class="new-chat-icon">+</span>
+
+                    <span>New chat</span>
+
+                </button>
+
+
+                <button class="search-button">
+
+                    <span>⌕</span>
+
+                    <span>Search chats</span>
+
+                    <kbd>⌘ K</kbd>
+
+                </button>
+
+            </div>
+
+
+            <!-- Conversation history -->
+
+            <div class="chat-history"></div>
+
+
+            <!-- User -->
+
+            <div class="sidebar-bottom">
+
+                <button class="user-profile">
+
+                    <div class="avatar">
+                        U
+                    </div>
+
+                    <div class="user-details">
+
+                        <strong>User</strong>
+
+                        <span>Free plan</span>
+
+                    </div>
+
+                    <span class="profile-menu">
+                        ⋯
+                    </span>
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =========================
+             MAIN
+        ========================== -->
+
+        <main class="main">
+
+
+            <!-- Top bar -->
+
+            <header class="topbar">
+
+                <button
+                    class="mobile-menu"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+
+                <button class="model-selector">
+
+                    <span class="model-icon">
+                        ✦
+                    </span>
+
+                    <span>NovaAI</span>
+
+                    <span class="chevron">
+                       ⌄
+                    </span>
+
+                </button>
+
+
+                <div class="topbar-actions">
+
+                    <button
+                        class="topbar-button"
+                        title="Share"
+                    >
+                        ↗
+                    </button>
+
+                    <button
+                        class="topbar-button"
+                        title="More"
+                    >
+                        ⋯
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- =========================
+                 CHAT
+            ========================== -->
+
+            <section class="chat-area">
+
+
+                <!-- Empty state -->
+
+                <div class="welcome">
+
+                    <div class="welcome-icon">
+                        ✦
+                    </div>
+
+                    <h1>
+                        How can I help you?
+                    </h1>
+
+                    <p>
+                        Ask NovaAI anything. Explore ideas,
+                        solve problems, learn, create, and more.
+                    </p>
+
+
+                    <!-- Suggestions -->
+
+                    <div class="suggestions">
+
+                        <button class="suggestion">
+
+                            <span class="suggestion-icon">
+                                ✦
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Explain something
+                                </strong>
+
+                                <small>
+                                    Help me understand a difficult concept
+                                </small>
+
+                            </div>
+
+                        </button>
+
+
+                        <button class="suggestion">
+
+                            <span class="suggestion-icon">
+                                ⌘
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Write some code
+                                </strong>
+
+                                <small>
+                                    Help me build or debug a project
+                                </small>
+
+                            </div>
+
+                        </button>
+
+
+                        <button class="suggestion">
+
+                            <span class="suggestion-icon">
+                                ✎
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Help me write
+                                </strong>
+
+                                <small>
+                                    Create or improve something
+                                </small>
+
+                            </div>
+
+                        </button>
+
+
+                        <button class="suggestion">
+
+                            <span class="suggestion-icon">
+                                ◈
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Brainstorm ideas
+                                </strong>
+
+                                <small>
+                                    Explore possibilities together
+                                </small>
+
+                            </div>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     MESSAGE COMPOSER
+                ========================== -->
+
+                <div class="composer-container">
+
+                    <form class="composer">
+
+                        <button
+                            type="button"
+                            class="attach-button"
+                            title="Attach"
+                        >
+                            +
+                        </button>
+
+
+                        <textarea
+                            id="message-input"
+                            placeholder="Message NovaAI..."
+                            rows="1"
+                        ></textarea>
+
+
+                        <div class="composer-actions">
+
+                            <button
+                                type="button"
+                                class="voice-button"
+                                title="Voice"
+                                aria-label="Voice"
+                            >
+                                <svg
+                                    class="mic-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v5a3.5 3.5 0 0 0 3.5 3.5Z"
+                                    />
+
+                                    <path
+                                        d="M18 11a6 6 0 0 1-12 0"
+                                    />
+
+                                    <path
+                                        d="M12 17v4"
+                                    />
+
+                                    <path
+                                        d="M9 21h6"
+                                    />
+                                </svg>
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="send-button"
+                                title="Send"
+                                aria-label="Send"
+                            >
+                                <span class="send-icon">↑</span>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+
+                    <p class="composer-disclaimer">
+                        NovaAI can make mistakes.
+                        Check important information.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
