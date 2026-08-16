@@ -24,7 +24,7 @@ loginForm.addEventListener("submit", async (event) => {
         }
 
         if (data.session) {
-            window.location.href = "index.html";
+            window.location.href = "nova.html";
         }
 
     } catch (error) {
