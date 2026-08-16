@@ -55,3 +55,20 @@ signupForm.addEventListener("submit", async (event) => {
         submitButton.innerHTML = "Create account <span>→</span>";
     }
 });
+
+const googleButton = document.querySelector("#google-signup");
+
+googleButton?.addEventListener("click", async () => {
+
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: `${window.location.origin}/nova.html`
+        }
+    });
+
+    if (error) {
+        console.error("Google signup error:", error);
+        alert(error.message);
+    }
+});
