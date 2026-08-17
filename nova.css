@@ -1709,3 +1709,12 @@ button {
     width: 100%;
     min-width: 600px;
 }
+
+@media (max-width: 800px) {
+
+    .chat-area {
+        padding-bottom: 160px;
+        overflow-y: auto;
+    }
+
+}
