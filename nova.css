@@ -1647,3 +1647,44 @@ button {
 .assistant-message tr:nth-child(even) {
     background: rgba(128, 128, 128, 0.06);
 }
+
+.assistant-message h1,
+.assistant-message h2,
+.assistant-message h3 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.assistant-message p {
+    margin: 8px 0;
+}
+
+.assistant-message ul,
+.assistant-message ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.assistant-message li {
+    margin: 4px 0;
+}
+
+.assistant-message strong {
+    font-weight: 700;
+}
+
+.assistant-message code {
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.assistant-message pre {
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+.assistant-message pre code {
+    padding: 0;
+}
