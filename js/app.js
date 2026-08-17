@@ -780,37 +780,48 @@ function addUserMessage(message) {
 ========================= */
 function addAssistantMessage(message) {
 
-    const wrapper = document.createElement("div");
+    const wrapper =
+        document.createElement("div");
 
     wrapper.className =
         "message-wrapper assistant-message-wrapper";
 
-    wrapper.innerHTML = `
-        <div class="assistant-avatar">
-            ✦
-        </div>
+    const avatar =
+        document.createElement("div");
 
-        <div class="message assistant-message"></div>
-    `;
+    avatar.className =
+        "assistant-avatar";
+
+    avatar.textContent = "✦";
 
     const messageElement =
-        wrapper.querySelector(".assistant-message");
+        document.createElement("div");
 
-    if (typeof marked !== "undefined") {
-        messageElement.innerHTML =
-            marked.parse(message);
-    } else {
-        messageElement.textContent = message;
-    }
+    messageElement.className =
+        "message assistant-message";
+
+    /*
+     * Convert Markdown from NovaAI
+     * into HTML, then sanitize it.
+     */
+    const markdownHTML =
+        marked.parse(message);
+
+    messageElement.innerHTML =
+        DOMPurify.sanitize(markdownHTML);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(messageElement);
 
     chatArea.insertBefore(
         wrapper,
-        document.querySelector(".composer-container")
+        document.querySelector(
+            ".composer-container"
+        )
     );
 
     scrollToBottom();
 }
-
 async function typeAssistantMessage(message) {
 
     const wrapper =
