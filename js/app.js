@@ -1103,8 +1103,10 @@ function scrollToBottom() {
 
     requestAnimationFrame(() => {
 
-        chatArea.scrollTop =
-            chatArea.scrollHeight;
+        chatArea.scrollTo({
+            top: chatArea.scrollHeight,
+            behavior: "smooth"
+        });
     });
 }
 
