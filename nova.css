@@ -1624,18 +1624,25 @@ button {
     width: 100%;
     border-collapse: collapse;
     margin: 16px 0;
-    font-size: 14px;
-    overflow: hidden;
-    border-radius: 8px;
-    display: block;
-    overflow-x: auto;
-    max-width: 100%;
+    display: table;
+}
+
+.assistant-message thead {
+    display: table-header-group;
+}
+
+.assistant-message tbody {
+    display: table-row-group;
+}
+
+.assistant-message tr {
+    display: table-row;
 }
 
 .assistant-message th,
 .assistant-message td {
+    border: 1px solid #333;
     padding: 10px 12px;
-    border: 1px solid rgba(128, 128, 128, 0.25);
     text-align: left;
     vertical-align: top;
 }
@@ -1644,6 +1651,9 @@ button {
     font-weight: 600;
 }
 
+.assistant-message td {
+    line-height: 1.5;
+}
 .assistant-message tr:nth-child(even) {
     background: rgba(128, 128, 128, 0.06);
 }
@@ -1687,4 +1697,15 @@ button {
 
 .assistant-message pre code {
     padding: 0;
+}
+
+.assistant-message .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+.assistant-message .table-wrapper table {
+    width: 100%;
+    min-width: 600px;
 }
