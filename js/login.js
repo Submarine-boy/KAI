@@ -46,7 +46,7 @@ googleButton?.addEventListener("click", async () => {
         provider: "google",
         options: {
             redirectTo:
-                "https://submarine-boy.github.io/Nova-Ai/nova.html"
+                "https://submarine-boy.github.io/KAI/nova.html"
         }
     });
 
