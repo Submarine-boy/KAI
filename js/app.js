@@ -1,59 +1,41 @@
 import { supabase } from "./supabase.js";
 
-
-/* =========================
+/* =========================================================
    ELEMENTS
-========================= */
+========================================================= */
 
 const chatArea = document.querySelector(".chat-area");
 const composer = document.querySelector(".composer");
 const messageInput = document.querySelector("#message-input");
 const welcome = document.querySelector(".welcome");
 
-const newChatButton =
-    document.querySelector(".new-chat");
+const newChatButton = document.querySelector(".new-chat");
+const mobileMenuButton = document.querySelector(".mobile-menu");
+const closeSidebarButton = document.querySelector(".close-sidebar");
+const sidebar = document.querySelector(".sidebar");
+const chatHistory = document.querySelector(".chat-history");
 
-const mobileMenuButton =
-    document.querySelector(".mobile-menu");
+const userProfileButton = document.querySelector(".user-profile");
+const accountPopup = document.querySelector(".account-popup");
+const sidebarBottom = document.querySelector(".sidebar-bottom");
 
-const closeSidebarButton =
-    document.querySelector(".close-sidebar");
+const logoutButton = document.querySelector(".logout-button");
 
-const sidebar =
-    document.querySelector(".sidebar");
+const accountName = document.querySelector(".account-name");
+const accountEmail = document.querySelector(".account-email");
+const accountAvatar = document.querySelector(".account-avatar");
 
-const chatHistory =
-    document.querySelector(".chat-history");
-const userProfileButton =
-    document.querySelector(".user-profile");
-
-const accountPopup =
-    document.querySelector(".account-popup");
-
-const logoutButton =
-    document.querySelector(".logout-button");
-
-const accountName =
-    document.querySelector(".account-name");
-
-const accountEmail =
-    document.querySelector(".account-email");
-
-const accountAvatar =
-    document.querySelector(".account-avatar");
-
-/* =========================
+/* =========================================================
    STATE
-========================= */
+========================================================= */
 
 let currentUser = null;
 let currentChatId = null;
 let messages = [];
 
-
-/* =========================
+/* =========================================================
    INITIALIZE
-========================= */
+========================================================= */
 
 async function initializeApp() {
 
@@ -63,23 +45,17 @@ async function initializeApp() {
     } = await supabase.auth.getUser();
 
     if (error) {
-
-        console.error(
-            "Could not get user:",
-            error
-        );
-
+        console.error("Could not get user:", error);
         return;
     }
 
     if (!data.user) {
-
         console.error("No logged-in user.");
-
         return;
     }
 
     currentUser = data.user;
+
     console.log(
         "CURRENT USER:",
         currentUser.id,
@@ -91,13 +67,12 @@ async function initializeApp() {
     await loadChats();
 }
 
-
 initializeApp();
 
-
-/* =========================
+/* =========================================================
    USER PROFILE
-========================= */
+========================================================= */
+
 function loadUserProfile() {
 
     const name =
@@ -105,135 +80,202 @@ function loadUserProfile() {
         currentUser.email?.split("@")[0] ||
         "User";
 
-
     const email =
-        currentUser.email ||
-        "";
-
+        currentUser.email || "";
 
     const userNameElement =
-        document.querySelector(
-            ".user-details strong"
-        );
-
+        document.querySelector(".user-details strong");
 
     const avatar =
         document.querySelector(".avatar");
 
-
     if (userNameElement) {
-
-        userNameElement.textContent =
-            name;
+        userNameElement.textContent = name;
     }
 
-
     if (avatar) {
-
         avatar.textContent =
             name.charAt(0).toUpperCase();
     }
 
-
-    /* Account popup */
-
     if (accountName) {
-
-        accountName.textContent =
-            name;
+        accountName.textContent = name;
     }
-
 
     if (accountEmail) {
-
-        accountEmail.textContent =
-            email;
+        accountEmail.textContent = email;
     }
 
-
     if (accountAvatar) {
-
         accountAvatar.textContent =
             name.charAt(0).toUpperCase();
     }
 }
 
-/* =========================
+/* =========================================================
    ACCOUNT POPUP
-========================= */
+========================================================= */
 
-userProfileButton?.addEventListener(
-    "click",
-    event => {
+function openAccountPopup() {
 
-        event.stopPropagation();
-
-        accountPopup?.classList.toggle(
-            "show"
-        );
+    if (!accountPopup) {
+        console.error("ACCOUNT POPUP NOT FOUND");
+        return;
     }
-);
+
+    console.log("Opening account popup");
+
+    accountPopup.style.display = "flex";
+    accountPopup.style.visibility = "visible";
+    accountPopup.style.opacity = "1";
+    accountPopup.style.pointerEvents = "auto";
+    accountPopup.style.transform = "translateY(0)";
+
+    accountPopup.classList.add("show");
+
+    if (sidebarBottom) {
+        sidebarBottom.classList.add("profile-open");
+    }
+}
 
 
-/* Close when clicking elsewhere */
+function closeAccountPopup() {
+
+    if (!accountPopup) {
+        return;
+    }
+
+    console.log("Closing account popup");
+
+    accountPopup.style.display = "none";
+    accountPopup.style.visibility = "hidden";
+    accountPopup.style.opacity = "0";
+    accountPopup.style.pointerEvents = "none";
+
+    accountPopup.classList.remove("show");
+
+    if (sidebarBottom) {
+        sidebarBottom.classList.remove("profile-open");
+    }
+}
+
+
+function toggleAccountPopup(event) {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!accountPopup) {
+        console.error("ACCOUNT POPUP NOT FOUND");
+        return;
+    }
+
+    const isOpen =
+        accountPopup.style.display === "flex" ||
+        accountPopup.classList.contains("show");
+
+    if (isOpen) {
+        closeAccountPopup();
+    } else {
+        openAccountPopup();
+    }
+}
+
+
+/* Profile button */
+
+if (userProfileButton) {
+
+    userProfileButton.addEventListener(
+        "click",
+        toggleAccountPopup
+    );
+
+}
+
+
+/* Prevent popup clicks from closing it */
+
+if (accountPopup) {
+
+    accountPopup.addEventListener(
+        "click",
+        event => {
+            event.stopPropagation();
+        }
+    );
+
+}
+
+
+/* Click outside */
 
 document.addEventListener(
     "click",
     event => {
 
-        if (
-            !event.target.closest(
-                ".sidebar-bottom"
-            )
-        ) {
-
-            accountPopup?.classList.remove(
-                "show"
-            );
-        }
-    }
-);
-
-/* =========================
-   LOGOUT
-========================= */
-
-logoutButton?.addEventListener(
-    "click",
-    async () => {
-
-        const {
-            error
-        } = await supabase.auth.signOut();
-
-
-        if (error) {
-
-            console.error(
-                "LOGOUT ERROR:",
-                error
-            );
-
+        if (!accountPopup) {
             return;
         }
 
+        if (
+            !event.target.closest(".account-popup") &&
+            !event.target.closest(".user-profile")
+        ) {
 
-        currentUser = null;
+            closeAccountPopup();
 
-        currentChatId = null;
+        }
 
-        messages = [];
-
-
-        window.location.href =
-            "login.html";
     }
 );
-/* =========================
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        async event => {
+
+            event.stopPropagation();
+
+            const {
+                error
+            } = await supabase.auth.signOut();
+
+            if (error) {
+
+                console.error(
+                    "LOGOUT ERROR:",
+                    error
+                );
+
+                return;
+            }
+
+            currentUser = null;
+            currentChatId = null;
+            messages = [];
+
+            window.location.href =
+                "login.html";
+        }
+    );
+
+}
+
+/* =========================================================
    LOAD CHATS
-========================= */
+========================================================= */
 
 async function loadChats() {
+
+    if (!currentUser || !chatHistory) {
+        return;
+    }
 
     const {
         data,
@@ -245,7 +287,6 @@ async function loadChats() {
         .order("updated_at", {
             ascending: false
         });
-
 
     if (error) {
 
@@ -260,15 +301,17 @@ async function loadChats() {
     renderChatHistory(data || []);
 }
 
-
-/* =========================
+/* =========================================================
    RENDER CHAT HISTORY
-========================= */
+========================================================= */
 
 function renderChatHistory(chats) {
 
-    chatHistory.innerHTML = "";
+    if (!chatHistory) {
+        return;
+    }
 
+    chatHistory.innerHTML = "";
 
     if (chats.length === 0) {
 
@@ -286,7 +329,6 @@ function renderChatHistory(chats) {
         return;
     }
 
-
     const title =
         document.createElement("p");
 
@@ -297,7 +339,6 @@ function renderChatHistory(chats) {
         "Recent chats";
 
     chatHistory.appendChild(title);
-
 
     chats.forEach(chat => {
 
@@ -313,7 +354,6 @@ function renderChatHistory(chats) {
 
         item.dataset.chatId =
             chat.id;
-
 
         item.innerHTML = `
             <span class="history-icon">✦</span>
@@ -331,10 +371,9 @@ function renderChatHistory(chats) {
             </button>
         `;
 
-
         item.addEventListener(
             "click",
-            async (event) => {
+            async event => {
 
                 if (
                     event.target.classList.contains(
@@ -355,15 +394,14 @@ function renderChatHistory(chats) {
             }
         );
 
-
         chatHistory.appendChild(item);
+
     });
 }
 
-
-/* =========================
+/* =========================================================
    CREATE CHAT
-========================= */
+========================================================= */
 
 async function createChat(title) {
 
@@ -379,7 +417,6 @@ async function createChat(title) {
         .select()
         .single();
 
-
     if (error) {
 
         console.error(
@@ -390,7 +427,6 @@ async function createChat(title) {
         return null;
     }
 
-
     currentChatId =
         data.id;
 
@@ -399,10 +435,9 @@ async function createChat(title) {
     return data;
 }
 
-
-/* =========================
+/* =========================================================
    OPEN CHAT
-========================= */
+========================================================= */
 
 async function openChat(chatId) {
 
@@ -418,7 +453,6 @@ async function openChat(chatId) {
             ascending: true
         });
 
-
     if (error) {
 
         console.error(
@@ -429,18 +463,15 @@ async function openChat(chatId) {
         return;
     }
 
-
     currentChatId =
         chatId;
 
     messages =
         data || [];
 
-
     clearDisplayedMessages();
 
     hideWelcome();
-
 
     messages.forEach(message => {
 
@@ -455,179 +486,139 @@ async function openChat(chatId) {
             addAssistantMessage(
                 message.content
             );
-        }
-    });
 
+        }
+
+    });
 
     await loadChats();
 
     scrollToBottom();
 }
 
-
-/* =========================
+/* =========================================================
    SEND MESSAGE
-========================= */
+========================================================= */
 
-composer.addEventListener(
-    "submit",
-    async (event) => {
+if (composer) {
 
-        event.preventDefault();
+    composer.addEventListener(
+        "submit",
+        async event => {
 
-        const message =
-            messageInput.value.trim();
+            event.preventDefault();
 
-        if (!message) {
-            return;
-        }
+            const message =
+                messageInput.value.trim();
 
-        if (!currentUser) {
+            if (!message) {
+                return;
+            }
 
-            console.error(
-                "No authenticated user."
-            );
-
-            return;
-        }
-
-
-        /* =========================
-           CREATE CHAT
-        ========================= */
-
-        if (!currentChatId) {
-
-            const title =
-                createChatTitle(message);
-
-            const chat =
-                await createChat(title);
-
-            if (!chat) {
+            if (!currentUser) {
 
                 console.error(
-                    "Chat could not be created."
+                    "No authenticated user."
                 );
 
                 return;
             }
-        }
 
+            if (!currentChatId) {
 
-        /* =========================
-           CLEAR INPUT
-        ========================= */
+                const title =
+                    createChatTitle(message);
 
-        messageInput.value = "";
+                const chat =
+                    await createChat(title);
 
-        autoResize();
+                if (!chat) {
 
-        hideWelcome();
+                    console.error(
+                        "Chat could not be created."
+                    );
 
-
-        /* =========================
-           SAVE USER MESSAGE
-        ========================= */
-
-        const savedUserMessage =
-            await saveUserMessage(message);
-
-        if (!savedUserMessage) {
-            return;
-        }
-
-
-        /* =========================
-           SHOW TYPING
-        ========================= */
-
-        showTypingIndicator();
-
-
-        try {
-
-           /* =========================
-               PREPARE CONVERSATION
-               Send only the latest 30 messages
-            ========================= */
-            
-            const conversation =
-                messages
-                    .slice(-30)
-                    .map(message => ({
-                        role: message.role,
-                        content: message.content
-                    }));
-
-
-            /* =========================
-               CALL NOVAAI
-            ========================= */
-
-            const {
-                data,
-                error
-            } = await supabase.functions.invoke(
-                "swift-task",
-                {
-                    body: {
-                        messages: conversation
-                    }
+                    return;
                 }
-            );
-
-
-            if (error) {
-                throw error;
             }
 
+            messageInput.value = "";
 
-            if (!data?.response) {
+            autoResize();
 
-                throw new Error(
-                    "KAI returned no response."
+            hideWelcome();
+
+            const savedUserMessage =
+                await saveUserMessage(message);
+
+            if (!savedUserMessage) {
+                return;
+            }
+
+            showTypingIndicator();
+
+            try {
+
+                const conversation =
+                    messages
+                        .slice(-30)
+                        .map(message => ({
+                            role: message.role,
+                            content: message.content
+                        }));
+
+                const {
+                    data,
+                    error
+                } = await supabase.functions.invoke(
+                    "swift-task",
+                    {
+                        body: {
+                            messages: conversation
+                        }
+                    }
+                );
+
+                if (error) {
+                    throw error;
+                }
+
+                if (!data?.response) {
+
+                    throw new Error(
+                        "KAI returned no response."
+                    );
+                }
+
+                removeTypingIndicator();
+
+                await saveAssistantMessage(
+                    data.response,
+                    true
+                );
+
+            } catch (error) {
+
+                removeTypingIndicator();
+
+                console.error(
+                    "KAI ERROR:",
+                    error
+                );
+
+                addAssistantMessage(
+                    "Sorry, I couldn't connect to KAI right now. Please try again."
                 );
             }
 
+        }
+    );
 
-            /* =========================
-               REMOVE TYPING
-            ========================= */
+}
 
-            removeTypingIndicator();
-
-
-            /* =========================
-               SAVE AI RESPONSE
-            ========================= */
-
-           await saveAssistantMessage(
-              data.response,
-              true
-           );
-
-
-       } catch (error) {
-
-            removeTypingIndicator();
-
-            console.error(
-              "KAI ERROR:",
-                 error
-             );
-
-            addAssistantMessage(
-              "Sorry, I couldn't connect to KAI right now. Please try again."
-          );
-      }
-    }
-);
-
-
-/* =========================
+/* =========================================================
    SAVE USER MESSAGE
-========================= */
+========================================================= */
 
 async function saveUserMessage(message) {
 
@@ -645,7 +636,6 @@ async function saveUserMessage(message) {
         .select()
         .single();
 
-
     if (error) {
 
         console.error(
@@ -656,26 +646,24 @@ async function saveUserMessage(message) {
         return null;
     }
 
-
     messages.push(data);
 
     addUserMessage(message);
 
     await updateChatTimestamp();
 
-
     return data;
 }
 
-
-/* =========================
+/* =========================================================
    SAVE ASSISTANT MESSAGE
-========================= */
+========================================================= */
 
 async function saveAssistantMessage(
     message,
     animate = false
 ) {
+
     const {
         data,
         error
@@ -690,7 +678,6 @@ async function saveAssistantMessage(
         .select()
         .single();
 
-
     if (error) {
 
         console.error(
@@ -701,32 +688,30 @@ async function saveAssistantMessage(
         return null;
     }
 
-
     messages.push(data);
 
-if (animate) {
+    if (animate) {
 
-    await typeAssistantMessage(
-        message
-    );
+        await typeAssistantMessage(
+            message
+        );
 
-} else {
+    } else {
 
-    addAssistantMessage(
-        message
-    );
-}
+        addAssistantMessage(
+            message
+        );
 
-await updateChatTimestamp();
+    }
 
+    await updateChatTimestamp();
 
     return data;
 }
 
-
-/* =========================
-   UPDATE CHAT TIMESTAMP
-========================= */
+/* =========================================================
+   UPDATE CHAT
+========================================================= */
 
 async function updateChatTimestamp() {
 
@@ -747,7 +732,6 @@ async function updateChatTimestamp() {
             currentUser.id
         );
 
-
     if (error) {
 
         console.error(
@@ -758,49 +742,46 @@ async function updateChatTimestamp() {
         return;
     }
 
-
     await loadChats();
 }
 
-
-/* =========================
+/* =========================================================
    NEW CHAT
-========================= */
+========================================================= */
 
-newChatButton.addEventListener(
-    "click",
-    () => {
+if (newChatButton) {
 
-        currentChatId = null;
+    newChatButton.addEventListener(
+        "click",
+        () => {
 
-        messages = [];
+            currentChatId = null;
 
+            messages = [];
 
-        clearDisplayedMessages();
+            clearDisplayedMessages();
 
+            if (welcome) {
+                welcome.style.display = "";
+            }
 
-        welcome.style.display =
-            "";
+            messageInput.value = "";
 
+            autoResize();
 
-        messageInput.value =
-            "";
+            messageInput.focus();
 
+            closeMobileSidebar();
 
-        autoResize();
+            loadChats();
+        }
+    );
 
-        messageInput.focus();
+}
 
-        closeMobileSidebar();
-
-        loadChats();
-    }
-);
-
-
-/* =========================
+/* =========================================================
    DELETE CHAT
-========================= */
+========================================================= */
 
 async function deleteChat(chatId) {
 
@@ -809,11 +790,9 @@ async function deleteChat(chatId) {
             "Delete this conversation?"
         );
 
-
     if (!confirmed) {
         return;
     }
-
 
     const {
         error
@@ -829,7 +808,6 @@ async function deleteChat(chatId) {
             currentUser.id
         );
 
-
     if (error) {
 
         console.error(
@@ -840,18 +818,7 @@ async function deleteChat(chatId) {
         return;
     }
 
-
-    /*
-     * Because messages.chat_id
-     * references chats.id with
-     * ON DELETE CASCADE,
-     * its messages are deleted too.
-     */
-
-
-    if (
-        currentChatId === chatId
-    ) {
+    if (currentChatId === chatId) {
 
         currentChatId = null;
 
@@ -859,18 +826,17 @@ async function deleteChat(chatId) {
 
         clearDisplayedMessages();
 
-        welcome.style.display =
-            "";
+        if (welcome) {
+            welcome.style.display = "";
+        }
     }
-
 
     await loadChats();
 }
 
-
-/* =========================
+/* =========================================================
    DISPLAY USER MESSAGE
-========================= */
+========================================================= */
 
 function addUserMessage(message) {
 
@@ -880,13 +846,11 @@ function addUserMessage(message) {
     wrapper.className =
         "message-wrapper user-message-wrapper";
 
-
     wrapper.innerHTML = `
         <div class="message user-message">
             ${escapeHTML(message)}
         </div>
     `;
-
 
     chatArea.insertBefore(
         wrapper,
@@ -895,14 +859,13 @@ function addUserMessage(message) {
         )
     );
 
-
     scrollToBottom();
 }
 
-
-/* =========================
+/* =========================================================
    DISPLAY ASSISTANT MESSAGE
-========================= */
+========================================================= */
+
 function addAssistantMessage(message) {
 
     const wrapper =
@@ -925,10 +888,6 @@ function addAssistantMessage(message) {
     messageElement.className =
         "message assistant-message";
 
-    /*
-     * Convert Markdown from NovaAI
-     * into HTML, then sanitize it.
-     */
     const markdownHTML =
         marked.parse(message);
 
@@ -947,6 +906,11 @@ function addAssistantMessage(message) {
 
     scrollToBottom();
 }
+
+/* =========================================================
+   TYPE ASSISTANT MESSAGE
+========================================================= */
+
 async function typeAssistantMessage(message) {
 
     const wrapper =
@@ -965,11 +929,15 @@ async function typeAssistantMessage(message) {
 
     chatArea.insertBefore(
         wrapper,
-        document.querySelector(".composer-container")
+        document.querySelector(
+            ".composer-container"
+        )
     );
 
     const messageElement =
-        wrapper.querySelector(".assistant-message");
+        wrapper.querySelector(
+            ".assistant-message"
+        );
 
     let currentText = "";
 
@@ -978,50 +946,43 @@ async function typeAssistantMessage(message) {
         currentText += character;
 
         messageElement.innerHTML =
-            marked.parse(currentText);
+            DOMPurify.sanitize(
+                marked.parse(currentText)
+            );
 
         scrollToBottom();
 
-        await new Promise(
-            resolve =>
-                setTimeout(resolve, 15)
-        );
+        await wait(15);
     }
 }
 
-/* =========================
+/* =========================================================
    CLEAR MESSAGES
-========================= */
+========================================================= */
 
 function clearDisplayedMessages() {
 
     document
-        .querySelectorAll(
-            ".message-wrapper"
-        )
+        .querySelectorAll(".message-wrapper")
         .forEach(element => {
             element.remove();
         });
 }
 
-
-/* =========================
-   TYPING INDICATOR
-========================= */
+/* =========================================================
+   TYPING
+========================================================= */
 
 function showTypingIndicator() {
 
     const typing =
         document.createElement("div");
 
-
     typing.id =
         "typing-indicator";
 
-
     typing.className =
         "message-wrapper";
-
 
     typing.innerHTML = `
         <div class="assistant-avatar">
@@ -1035,14 +996,12 @@ function showTypingIndicator() {
         </div>
     `;
 
-
     chatArea.insertBefore(
         typing,
         document.querySelector(
             ".composer-container"
         )
     );
-
 
     scrollToBottom();
 }
@@ -1055,15 +1014,14 @@ function removeTypingIndicator() {
             "#typing-indicator"
         );
 
-
     if (typing) {
         typing.remove();
     }
 }
 
-/* =========================
+/* =========================================================
    SUGGESTIONS
-========================= */
+========================================================= */
 
 document
     .querySelectorAll(".suggestion")
@@ -1078,11 +1036,9 @@ document
                         "strong"
                     )?.textContent;
 
-
                 if (!title) {
                     return;
                 }
-
 
                 const prompts = {
 
@@ -1099,54 +1055,51 @@ document
                         "Help me brainstorm some ideas."
                 };
 
-
-                const prompt =
-                    prompts[title] ||
-                    title;
-
-
                 messageInput.value =
-                    prompt;
-
+                    prompts[title] || title;
 
                 composer.requestSubmit();
             }
         );
     });
 
-
-/* =========================
+/* =========================================================
    TEXTAREA
-========================= */
+========================================================= */
 
-messageInput.addEventListener(
-    "input",
-    autoResize
-);
+if (messageInput) {
 
+    messageInput.addEventListener(
+        "input",
+        autoResize
+    );
 
-messageInput.addEventListener(
-    "keydown",
-    event => {
+    messageInput.addEventListener(
+        "keydown",
+        event => {
 
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            composer.requestSubmit();
+                composer.requestSubmit();
+            }
         }
-    }
-);
+    );
 
+}
 
 function autoResize() {
 
+    if (!messageInput) {
+        return;
+    }
+
     messageInput.style.height =
         "auto";
-
 
     messageInput.style.height =
         Math.min(
@@ -1155,26 +1108,22 @@ function autoResize() {
         ) + "px";
 }
 
-
-/* =========================
+/* =========================================================
    MOBILE SIDEBAR
-========================= */
+========================================================= */
 
 mobileMenuButton?.addEventListener(
     "click",
     () => {
 
-        sidebar.style.left =
-            "0";
+        sidebar.style.left = "0";
     }
 );
-
 
 closeSidebarButton?.addEventListener(
     "click",
     closeMobileSidebar
 );
-
 
 function closeMobileSidebar() {
 
@@ -1187,10 +1136,9 @@ function closeMobileSidebar() {
     }
 }
 
-
-/* =========================
+/* =========================================================
    HELPERS
-========================= */
+========================================================= */
 
 function createChatTitle(message) {
 
@@ -1199,14 +1147,9 @@ function createChatTitle(message) {
             .replace(/\s+/g, " ")
             .trim();
 
-
-    if (
-        cleaned.length <= 40
-    ) {
-
+    if (cleaned.length <= 40) {
         return cleaned;
     }
-
 
     return (
         cleaned.substring(0, 40) +
@@ -1214,15 +1157,12 @@ function createChatTitle(message) {
     );
 }
 
-
 function hideWelcome() {
 
     if (welcome) {
-        welcome.style.display =
-            "none";
+        welcome.style.display = "none";
     }
 }
-
 
 function scrollToBottom() {
 
@@ -1232,9 +1172,9 @@ function scrollToBottom() {
             top: chatArea.scrollHeight,
             behavior: "smooth"
         });
+
     });
 }
-
 
 function wait(milliseconds) {
 
@@ -1247,18 +1187,13 @@ function wait(milliseconds) {
     );
 }
 
-
 function escapeHTML(text) {
 
     const element =
-        document.createElement(
-            "div"
-        );
-
+        document.createElement("div");
 
     element.textContent =
         text;
-
 
     return element.innerHTML;
 }
