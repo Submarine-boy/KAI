@@ -24,7 +24,23 @@ const sidebar =
 
 const chatHistory =
     document.querySelector(".chat-history");
+const userProfileButton =
+    document.querySelector(".user-profile");
 
+const accountPopup =
+    document.querySelector(".account-popup");
+
+const logoutButton =
+    document.querySelector(".logout-button");
+
+const accountName =
+    document.querySelector(".account-name");
+
+const accountEmail =
+    document.querySelector(".account-email");
+
+const accountAvatar =
+    document.querySelector(".account-avatar");
 
 /* =========================
    STATE
@@ -82,7 +98,6 @@ initializeApp();
 /* =========================
    USER PROFILE
 ========================= */
-
 function loadUserProfile() {
 
     const name =
@@ -90,25 +105,130 @@ function loadUserProfile() {
         currentUser.email?.split("@")[0] ||
         "User";
 
+
+    const email =
+        currentUser.email ||
+        "";
+
+
     const userNameElement =
         document.querySelector(
             ".user-details strong"
         );
 
+
     const avatar =
         document.querySelector(".avatar");
 
+
     if (userNameElement) {
-        userNameElement.textContent = name;
+
+        userNameElement.textContent =
+            name;
     }
 
+
     if (avatar) {
+
         avatar.textContent =
+            name.charAt(0).toUpperCase();
+    }
+
+
+    /* Account popup */
+
+    if (accountName) {
+
+        accountName.textContent =
+            name;
+    }
+
+
+    if (accountEmail) {
+
+        accountEmail.textContent =
+            email;
+    }
+
+
+    if (accountAvatar) {
+
+        accountAvatar.textContent =
             name.charAt(0).toUpperCase();
     }
 }
 
+/* =========================
+   ACCOUNT POPUP
+========================= */
 
+userProfileButton?.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+        accountPopup?.classList.toggle(
+            "show"
+        );
+    }
+);
+
+
+/* Close when clicking elsewhere */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if (
+            !event.target.closest(
+                ".sidebar-bottom"
+            )
+        ) {
+
+            accountPopup?.classList.remove(
+                "show"
+            );
+        }
+    }
+);
+
+/* =========================
+   LOGOUT
+========================= */
+
+logoutButton?.addEventListener(
+    "click",
+    async () => {
+
+        const {
+            error
+        } = await supabase.auth.signOut();
+
+
+        if (error) {
+
+            console.error(
+                "LOGOUT ERROR:",
+                error
+            );
+
+            return;
+        }
+
+
+        currentUser = null;
+
+        currentChatId = null;
+
+        messages = [];
+
+
+        window.location.href =
+            "login.html";
+    }
+);
 /* =========================
    LOAD CHATS
 ========================= */
