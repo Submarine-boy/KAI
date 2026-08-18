@@ -65,6 +65,12 @@ async function initializeApp() {
 
     currentUser = data.user;
 
+    console.log(
+        "CURRENT USER:",
+        currentUser.id,
+        currentUser.email
+    );
+
     loadUserProfile();
 
     await loadChats();
