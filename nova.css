@@ -1390,6 +1390,10 @@ a {
    FIXED COMPOSER
 ========================= */
 
+/* =========================
+   FIXED COMPOSER
+========================= */
+
 .composer-container {
     position: fixed;
 
@@ -1402,22 +1406,17 @@ a {
 
     transform: translateX(-50%);
 
-    width: min(900px, calc(100% - var(--sidebar-width)));
+    width: min(
+        900px,
+        calc(100% - var(--sidebar-width))
+    );
 
-    padding:
-        14px
-        20px
-        16px;
+    padding: 14px 20px 16px;
 
     z-index: 1000;
 
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(11, 16, 32, 0),
-            rgba(11, 16, 32, 0.94) 28%,
-            rgba(11, 16, 32, 1) 60%
-        );
+    /* REMOVE BACKGROUND */
+    background: transparent;
 }
 .composer {
     min-height: 58px;
