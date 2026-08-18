@@ -2717,3 +2717,156 @@ a {
 
     color: var(--text);
 }
+/* =========================================================
+   FORCE ACCOUNT POPUP
+========================================================= */
+
+.sidebar-bottom {
+    position: relative !important;
+}
+
+.account-popup {
+    position: absolute !important;
+
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 75px !important;
+
+    width: auto !important;
+
+    min-height: 180px !important;
+
+    padding: 16px !important;
+
+    display: none !important;
+
+    background: #111827 !important;
+
+    border: 2px solid #2563eb !important;
+
+    border-radius: 16px !important;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.8) !important;
+
+    z-index: 999999 !important;
+
+    color: white !important;
+}
+
+
+/* SHOW */
+
+.sidebar-bottom .account-popup.show {
+    display: block !important;
+}
+
+
+/* HEADER */
+
+.sidebar-bottom .account-popup .account-popup-header {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 12px !important;
+
+    padding-bottom: 14px !important;
+}
+
+
+/* AVATAR */
+
+.sidebar-bottom .account-popup .account-avatar {
+    width: 42px !important;
+    height: 42px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex-shrink: 0 !important;
+
+    border-radius: 12px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #06b6d4
+        ) !important;
+
+    color: white !important;
+}
+
+
+/* NAME */
+
+.sidebar-bottom .account-popup .account-name {
+    display: block !important;
+
+    color: white !important;
+
+    font-size: 14px !important;
+}
+
+
+/* EMAIL */
+
+.sidebar-bottom .account-popup .account-email {
+    display: block !important;
+
+    color: #a7b0c0 !important;
+
+    font-size: 11px !important;
+
+    margin-top: 4px !important;
+}
+
+
+/* DIVIDERS */
+
+.sidebar-bottom .account-popup .account-popup-divider {
+    display: block !important;
+
+    width: 100% !important;
+
+    height: 1px !important;
+
+    background: rgba(255,255,255,0.1) !important;
+
+    margin: 10px 0 !important;
+}
+
+
+/* PLAN */
+
+.sidebar-bottom .account-popup .account-plan {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 10px !important;
+
+    padding: 10px 0 !important;
+}
+
+
+/* LOGOUT */
+
+.sidebar-bottom .account-popup .logout-button {
+    display: flex !important;
+
+    width: 100% !important;
+
+    height: 40px !important;
+
+    align-items: center !important;
+
+    margin-top: 8px !important;
+
+    background: rgba(255,255,255,0.05) !important;
+
+    color: white !important;
+}
