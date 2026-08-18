@@ -64,7 +64,12 @@ async function initializeApp() {
     }
 
     currentUser = data.user;
-
+    alert(
+        "CURRENT USER:\n" +
+        currentUser.id +
+        "\n" +
+        currentUser.email
+    );
     console.log(
         "CURRENT USER:",
         currentUser.id,
