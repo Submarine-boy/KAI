@@ -63,7 +63,7 @@ googleButton?.addEventListener("click", async () => {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: "https://submarine-boy.github.io/Nova-Ai/nova.html"
+            redirectTo: "https://submarine-boy.github.io/KAI/nova.html"
         }
     });
 
