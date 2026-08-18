@@ -219,22 +219,15 @@ body {
 
 .auth-card {
     width: 100%;
-
     max-width: 430px;
 
-    padding: 40px;
+    padding: 38px;
 
-    position: relative;
+    box-sizing: border-box;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(22, 32, 51, 0.92),
-            rgba(11, 16, 32, 0.88)
-        );
+    background: var(--card);
 
-    border:
-        1px solid var(--border);
+    border: 1px solid var(--border);
 
     border-radius: 22px;
 
@@ -243,12 +236,7 @@ body {
     -webkit-backdrop-filter: blur(25px);
 
     box-shadow:
-        0 0 0 1px
-        rgba(6, 182, 212, 0.025),
-        0 25px 80px
-        rgba(0, 0, 0, 0.5);
-
-    overflow: hidden;
+        0 25px 80px rgba(0, 0, 0, 0.45);
 }
 
 
@@ -389,57 +377,50 @@ body {
 /* =========================
    INPUTS
 ========================= */
-
 input {
     width: 100%;
-
-    height: 52px;
+    height: 48px;
 
     padding: 0 15px;
 
-    border-radius: 11px;
+    border-radius: 10px;
 
-    border:
-        1px solid rgba(37, 99, 235, 0.18);
+    border: 1px solid var(--border);
 
     outline: none;
 
     background: var(--input);
 
-    color: var(--text);
+    color: white;
 
     font-size: 14px;
 
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
-}
+    font-family: inherit;
 
+    display: block;
+
+    transition: 0.2s;
+}
 
 input::placeholder {
-    color: var(--dim);
+    color: #60666b;
 }
-
-
-input:hover {
-    border-color:
-        rgba(37, 99, 235, 0.32);
-}
-
 
 input:focus {
-    border-color:
-        rgba(6, 182, 212, 0.7);
+    border-color: rgba(255, 255, 255, 0.35);
 
-    background:
-        rgba(37, 99, 235, 0.05);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(6, 182, 212, 0.07);
+    background: rgba(255, 255, 255, 0.07);
 }
 
+
+/* Keep every auth control the same width */
+
+.submit-btn,
+.social-btn {
+    width: 100%;
+
+    box-sizing: border-box;
+}
 
 /* =========================
    SUBMIT BUTTON
