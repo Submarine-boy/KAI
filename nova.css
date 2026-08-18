@@ -2053,3 +2053,257 @@ a {
         bottom: 70px;
     }
 }
+
+
+/* =========================================================
+   ACCOUNT POPUP - FINAL
+========================================================= */
+
+.sidebar-bottom {
+    position: relative;
+}
+
+.account-popup {
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    bottom: 75px;
+
+    width: auto;
+
+    display: none;
+
+    flex-direction: column;
+
+    padding: 16px;
+
+    background: #111827;
+
+    border: 1px solid rgba(37, 99, 235, 0.35);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.75);
+
+    z-index: 999999;
+
+    color: white;
+}
+
+.account-popup.show {
+    display: flex;
+}
+
+
+/* HEADER */
+
+.account-popup-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding-bottom: 13px;
+}
+
+
+/* AVATAR */
+
+.account-avatar {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #06b6d4
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+
+/* ACCOUNT TEXT */
+
+.account-info {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.account-name {
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+.account-email {
+    color: #a7b0c0;
+
+    font-size: 11px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+}
+
+
+/* DIVIDER */
+
+.account-popup-divider {
+    width: 100%;
+
+    height: 1px;
+
+    margin: 12px 0;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+}
+
+
+/* PLAN */
+
+.account-plan {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(37, 99, 235, 0.08);
+}
+
+.account-plan > span {
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background:
+        rgba(37, 99, 235, 0.15);
+
+    color: #06b6d4;
+
+    font-size: 15px;
+}
+
+.account-plan > div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.account-plan strong {
+    color: white;
+
+    font-size: 13px;
+}
+
+.account-plan small {
+    color: #778196;
+
+    font-size: 10px;
+}
+
+
+/* LOGOUT */
+
+.logout-button {
+    width: 100%;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 0 10px;
+
+    margin-top: 10px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    color: #a7b0c0;
+
+    font-size: 13px;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background:
+        rgba(239, 68, 68, 0.1);
+
+    color: #f87171;
+}
+
+.logout-button span {
+    color: #06b6d4;
+
+    font-size: 17px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .account-popup {
+        left: 10px;
+        right: 10px;
+        bottom: 75px;
+    }
+
+}
