@@ -613,7 +613,7 @@ composer.addEventListener(
             removeTypingIndicator();
 
             console.error(
-              "NOVAAI ERROR:",
+              "KAI ERROR:",
                  error
              );
 
