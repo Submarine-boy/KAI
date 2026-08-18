@@ -586,7 +586,7 @@ composer.addEventListener(
             if (!data?.response) {
 
                 throw new Error(
-                    "NovaAI returned no response."
+                    "KAI returned no response."
                 );
             }
 
@@ -618,7 +618,7 @@ composer.addEventListener(
              );
 
             addAssistantMessage(
-              "Sorry, I couldn't connect to NovaAI right now. Please try again."
+              "Sorry, I couldn't connect to KAI right now. Please try again."
           );
       }
     }
