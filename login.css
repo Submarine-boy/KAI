@@ -518,8 +518,17 @@ body {
    SOCIAL BUTTON
 ========================= */
 
-.auth-form .social-btn {
+```css
+/* =========================
+   SOCIAL BUTTON
+========================= */
+
+.social-btn {
+    width: 100%;
+    max-width: 100%;
     height: 50px;
+
+    box-sizing: border-box;
 
     border-radius: 11px;
 
@@ -551,24 +560,24 @@ body {
         transform 0.2s ease;
 }
 
-.auth-form .social-btn:hover {
+.social-btn:hover {
     background:
         rgba(37, 99, 235, 0.08);
 
     border-color:
         rgba(6, 182, 212, 0.4);
 
-    transform: translateY(-1px);
+    transform:
+        translateY(-1px);
 }
 
-.auth-form .social-btn span {
+.social-btn span {
     color: var(--accent);
 
     font-size: 17px;
 
     font-weight: 700;
 }
-
 
 /* =========================
    SWITCH AUTH
