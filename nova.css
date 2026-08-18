@@ -1009,7 +1009,7 @@ a {
     padding:
         35px
         max(24px, 8vw)
-        180px;
+        200px;
 }
 
 .chat-area::-webkit-scrollbar {
@@ -1387,25 +1387,24 @@ a {
    COMPOSER
 ========================= */
 
+/* =========================
+   FIXED COMPOSER
+========================= */
+
 .composer-container {
-    width: 100%;
+    position: absolute;
 
-    max-width: 900px;
-
-    position: sticky;
-
-    left: 0;
-    right: 0;
+    left: 50%;
     bottom: 0;
 
-    margin: auto;
+    transform: translateX(-50%);
 
-    padding:
-        14px
-        20px
-        16px;
+    width: 100%;
+    max-width: 900px;
 
-    z-index: 30;
+    padding: 14px 20px 16px;
+
+    z-index: 100;
 
     background:
         linear-gradient(
@@ -1415,7 +1414,6 @@ a {
             rgba(11, 16, 32, 1) 60%
         );
 }
-
 .composer {
     min-height: 58px;
 
@@ -1910,9 +1908,8 @@ a {
         padding:
             20px
             14px
-            160px;
+            170px;
     }
-
     .welcome {
         min-height:
             calc(
@@ -1983,8 +1980,12 @@ a {
     }
 
     .composer-container {
+        left: 0;
+   
+        transform: none;
+   
         max-width: none;
-
+   
         padding:
             8px
             10px
