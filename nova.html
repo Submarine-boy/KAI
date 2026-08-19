@@ -1,441 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAI</title>
-
     <link rel="stylesheet" href="nova.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script>
-        marked.setOptions({
-            gfm: true,
-            breaks: true
-        });
+        marked.setOptions({ gfm: true, breaks: true });
     </script>
-
-    <!-- Authentication protection -->
-    <script
-        type="module"
-        src="js/auth-guard.js"
-    ></script>
+    <script type="module" src="js/auth-guard.js"></script>
 </head>
-
-
 <body>
-
     <div class="app">
-
-
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
-
         <aside class="sidebar">
-
             <div class="sidebar-top">
-
                 <div class="sidebar-header">
-
                     <a href="index.html" class="logo">
-
-                        <span class="logo-icon">✦</span>
-
+                        <span class="logo-icon" aria-hidden="true">
+                            <svg class="kai-mark" viewBox="0 0 32 32" fill="none">
+                                <path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="24" cy="8" r="2" fill="currentColor"/>
+                            </svg>
+                        </span>
                         <span>KAI</span>
-
                     </a>
-
-                    <button
-                        class="close-sidebar"
-                        aria-label="Close sidebar"
-                    >
-                        ×
-                    </button>
-
+                    <button class="close-sidebar" aria-label="Close sidebar">×</button>
                 </div>
 
-
                 <button class="new-chat">
-
                     <span class="new-chat-icon">+</span>
-
                     <span>New chat</span>
-
                 </button>
-
 
                 <button class="search-button">
-
                     <span>⌕</span>
-
                     <span>Search chats</span>
-
                     <kbd>⌘ K</kbd>
-
                 </button>
-
             </div>
-
-
-            <!-- Conversation history -->
 
             <div class="chat-history"></div>
 
-
-            <!-- User -->
-
-           <div class="sidebar-bottom">
-
-            <button
-                class="user-profile"
-                type="button"
-            >
-        
-                <div class="avatar">
-                    U
-                </div>
-        
-                <div class="user-details">
-        
-                    <strong>User</strong>
-        
-                    <span>Free plan</span>
-        
-                </div>
-        
-                <span class="profile-menu">
-                    ⋯
-                </span>
-        
-            </button>
-        
-        
-            <!-- Account popup -->
-        
-            <div class="account-popup">
-        
-                <div class="account-popup-header">
-        
-                    <div class="account-avatar">
-                        U
+            <div class="sidebar-bottom">
+                <button class="user-profile" type="button">
+                    <div class="avatar">U</div>
+                    <div class="user-details">
+                        <strong>User</strong>
+                        <span>Free plan</span>
                     </div>
-        
-                    <div class="account-info">
-        
-                        <strong class="account-name">
-                            User
-                        </strong>
-        
-                        <span class="account-email">
-                            user@example.com
-                        </span>
-        
-                    </div>
-        
-                </div>
-        
-        
-                <div class="account-popup-divider"></div>
-        
-        
-                <div class="account-plan">
-        
-                    <span>✦</span>
-        
-                    <div>
-        
-                        <strong>Free plan</strong>
-        
-                        <small>Current plan</small>
-        
-                    </div>
-        
-                </div>
-        
-        
-                <div class="account-popup-divider"></div>
-        
-        
-                <button
-                    class="logout-button"
-                    type="button"
-                >
-        
-                    <span>↪</span>
-        
-                    Log out
-        
+                    <span class="profile-menu">⋯</span>
                 </button>
-        
+
+                <div class="account-popup">
+                    <div class="account-popup-header">
+                        <div class="account-avatar">U</div>
+                        <div class="account-info">
+                            <strong class="account-name">User</strong>
+                            <span class="account-email">user@example.com</span>
+                        </div>
+                    </div>
+
+                    <div class="account-popup-divider"></div>
+
+                    <div class="account-plan">
+                        <span class="kai-plan-mark" aria-hidden="true">
+                            <svg class="kai-mark" viewBox="0 0 32 32" fill="none">
+                                <path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="24" cy="8" r="2" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <strong>Free plan</strong>
+                            <small>Current plan</small>
+                        </div>
+                    </div>
+
+                    <div class="account-popup-divider"></div>
+
+                    <button class="logout-button" type="button">
+                        <span>↪</span>
+                        Log out
+                    </button>
+                </div>
             </div>
-        
-        </div>
         </aside>
 
-
-        <!-- =========================
-             MAIN
-        ========================== -->
-
         <main class="main">
-
-
-            <!-- Top bar -->
-
             <header class="topbar">
-
-                <button
-                    class="mobile-menu"
-                    aria-label="Open menu"
-                >
-                    ☰
-                </button>
-
+                <button class="mobile-menu" aria-label="Open menu">☰</button>
 
                 <button class="model-selector">
-
-                    <span class="model-icon">
-                        ✦
+                    <span class="model-icon" aria-hidden="true">
+                        <svg class="kai-mark" viewBox="0 0 32 32" fill="none">
+                            <path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="24" cy="8" r="2" fill="currentColor"/>
+                        </svg>
                     </span>
-
                     <span>KAI</span>
-
-                    <span class="chevron">
-                       ⌄
-                    </span>
-
+                    <span class="chevron">⌄</span>
                 </button>
 
-
                 <div class="topbar-actions">
-
-                    <button
-                        class="topbar-button"
-                        title="Share"
-                    >
-                        ↗
-                    </button>
-
-                    <button
-                        class="topbar-button"
-                        title="More"
-                    >
-                        ⋯
-                    </button>
-
+                    <button class="topbar-button" title="Share">↗</button>
+                    <button class="topbar-button" title="More">⋯</button>
                 </div>
-
             </header>
 
-
-            <!-- =========================
-                 CHAT
-            ========================== -->
-
             <section class="chat-area">
-
-
-                <!-- Empty state -->
-
                 <div class="welcome">
-
-                    <div class="welcome-icon">
-                        ✦
+                    <div class="welcome-icon" aria-hidden="true">
+                        <svg class="kai-mark" viewBox="0 0 32 32" fill="none">
+                            <path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="24" cy="8" r="2" fill="currentColor"/>
+                        </svg>
                     </div>
 
-                    <h1>
-                        How can I help you?
-                    </h1>
-
-                    <p>
-                        Ask KAI anything. Explore ideas,
-                        solve problems, learn, create, and more.
-                    </p>
-
-
-                    <!-- Suggestions -->
+                    <h1>How can I help you?</h1>
+                    <p>Ask KAI anything. Explore ideas, solve problems, learn, create, and more.</p>
 
                     <div class="suggestions">
-
                         <button class="suggestion">
-
-                            <span class="suggestion-icon">
-                                ✦
-                            </span>
-
+                            <span class="suggestion-icon">?</span>
                             <div>
-
-                                <strong>
-                                    Explain something
-                                </strong>
-
-                                <small>
-                                    Help me understand a difficult concept
-                                </small>
-
+                                <strong>Explain something</strong>
+                                <small>Help me understand a difficult concept</small>
                             </div>
-
                         </button>
 
-
                         <button class="suggestion">
-
-                            <span class="suggestion-icon">
-                                ⌘
-                            </span>
-
+                            <span class="suggestion-icon">⌘</span>
                             <div>
-
-                                <strong>
-                                    Write some code
-                                </strong>
-
-                                <small>
-                                    Help me build or debug a project
-                                </small>
-
+                                <strong>Write some code</strong>
+                                <small>Help me build or debug a project</small>
                             </div>
-
                         </button>
 
-
                         <button class="suggestion">
-
-                            <span class="suggestion-icon">
-                                ✎
-                            </span>
-
+                            <span class="suggestion-icon">✎</span>
                             <div>
-
-                                <strong>
-                                    Help me write
-                                </strong>
-
-                                <small>
-                                    Create or improve something
-                                </small>
-
+                                <strong>Help me write</strong>
+                                <small>Create or improve something</small>
                             </div>
-
                         </button>
 
-
                         <button class="suggestion">
-
-                            <span class="suggestion-icon">
-                                ◈
-                            </span>
-
+                            <span class="suggestion-icon">◈</span>
                             <div>
-
-                                <strong>
-                                    Brainstorm ideas
-                                </strong>
-
-                                <small>
-                                    Explore possibilities together
-                                </small>
-
+                                <strong>Brainstorm ideas</strong>
+                                <small>Explore possibilities together</small>
                             </div>
-
                         </button>
-
                     </div>
-
                 </div>
 
-
-                <!-- =========================
-                     MESSAGE COMPOSER
-                ========================== -->
-
                 <div class="composer-container">
-
                     <form class="composer">
+                        <button type="button" class="attach-button" title="Attach">+</button>
 
-                        <button
-                            type="button"
-                            class="attach-button"
-                            title="Attach"
-                        >
-                            +
-                        </button>
-
-
-                        <textarea
-                            id="message-input"
-                            placeholder="Message KAI..."
-                            rows="1"
-                        ></textarea>
-
+                        <textarea id="message-input" placeholder="Message KAI..." rows="1"></textarea>
 
                         <div class="composer-actions">
-
-                            <button
-                                type="button"
-                                class="voice-button"
-                                title="Voice"
-                                aria-label="Voice"
-                            >
-                                <svg
-                                    class="mic-icon"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v5a3.5 3.5 0 0 0 3.5 3.5Z"
-                                    />
-
-                                    <path
-                                        d="M18 11a6 6 0 0 1-12 0"
-                                    />
-
-                                    <path
-                                        d="M12 17v4"
-                                    />
-
-                                    <path
-                                        d="M9 21h6"
-                                    />
+                            <button type="button" class="voice-button" title="Voice" aria-label="Voice">
+                                <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v5a3.5 3.5 0 0 0 3.5 3.5Z"/>
+                                    <path d="M18 11a6 6 0 0 1-12 0"/>
+                                    <path d="M12 17v4"/>
+                                    <path d="M9 21h6"/>
                                 </svg>
                             </button>
 
-                            <button
-                                type="submit"
-                                class="send-button"
-                                title="Send"
-                                aria-label="Send"
-                            >
+                            <button type="submit" class="send-button" title="Send" aria-label="Send">
                                 <span class="send-icon">↑</span>
                             </button>
-
                         </div>
-
                     </form>
 
-
-                    <p class="composer-disclaimer">
-                        KAI can make mistakes.
-                        Check important information.
-                    </p>
-
+                    <p class="composer-disclaimer">KAI can make mistakes. Check important information.</p>
                 </div>
-
             </section>
-
         </main>
-
     </div>
 
     <script type="module" src="js/app.js"></script>
 </body>
-
 </html>
