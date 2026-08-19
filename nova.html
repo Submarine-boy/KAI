@@ -5,6 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAI</title>
     <link rel="stylesheet" href="nova.css">
+    <style>
+        /* KAI uses its own brand mark, separate from NovaAI. */
+        .kai-mark {
+            display: block;
+            width: 22px;
+            height: 22px;
+        }
+
+        .logo-icon .kai-mark {
+            width: 23px;
+            height: 23px;
+        }
+
+        .model-icon .kai-mark {
+            width: 17px;
+            height: 17px;
+        }
+
+        .welcome-icon .kai-mark {
+            width: 38px;
+            height: 38px;
+        }
+
+        .kai-plan-mark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kai-plan-mark .kai-mark {
+            width: 18px;
+            height: 18px;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script>
@@ -162,7 +196,6 @@
                 <div class="composer-container">
                     <form class="composer">
                         <button type="button" class="attach-button" title="Attach">+</button>
-
                         <textarea id="message-input" placeholder="Message KAI..." rows="1"></textarea>
 
                         <div class="composer-actions">
