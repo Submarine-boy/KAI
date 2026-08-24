@@ -356,7 +356,7 @@ function renderChatHistory(chats) {
             chat.id;
 
         item.innerHTML = `
-            <span class="history-icon">✦</span>
+            <span class="history-icon"><svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg></span>
 
             <span class="history-name">
                 ${escapeHTML(chat.title)}
@@ -880,7 +880,7 @@ function addAssistantMessage(message) {
     avatar.className =
         "assistant-avatar";
 
-    avatar.textContent = "✦";
+    avatar.innerHTML = `<svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg>`;
 
     const messageElement =
         document.createElement("div");
@@ -920,9 +920,7 @@ async function typeAssistantMessage(message) {
         "message-wrapper assistant-message-wrapper";
 
     wrapper.innerHTML = `
-        <div class="assistant-avatar">
-            ✦
-        </div>
+        <div class="assistant-avatar"><svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg></div>
 
         <div class="message assistant-message"></div>
     `;
@@ -985,9 +983,7 @@ function showTypingIndicator() {
         "message-wrapper";
 
     typing.innerHTML = `
-        <div class="assistant-avatar">
-            ✦
-        </div>
+        <div class="assistant-avatar"><svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg></div>
 
         <div class="typing-indicator">
             <span></span>
