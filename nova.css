@@ -452,7 +452,8 @@ a {
 
 .main {
     width: calc(100% - var(--sidebar-width));
-    height: 100vh;
+    height: 100dvh;
+    min-width: 0;
     margin-left: var(--sidebar-width);
     display: flex;
     flex-direction: column;
@@ -546,7 +547,7 @@ a {
     min-height: 0;
     overflow-y: auto;
     position: relative;
-    padding: 35px max(24px, 8vw) 190px;
+    padding: 24px max(24px, 8vw) 150px;
 }
 
 .chat-area::-webkit-scrollbar { width: 7px; }
@@ -558,14 +559,14 @@ a {
 
 .welcome {
     max-width: 850px;
-    min-height: calc(100vh - 250px);
+    min-height: calc(100dvh - 150px);
     margin: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 50px 20px;
+    padding: 24px 20px;
 }
 
 .welcome-icon {
@@ -832,6 +833,7 @@ a {
 
 .composer-disclaimer {
     margin: 8px 0 0;
+    display: block;
     text-align: center;
     color: var(--dim);
     font-size: 10px;
@@ -1002,12 +1004,12 @@ a {
     }
 
     .chat-area {
-        padding: 20px 14px 170px;
+        padding: 20px 14px 150px;
     }
 
     .welcome {
-        min-height: calc(100vh - 210px);
-        padding: 30px 10px;
+        min-height: calc(100dvh - 150px);
+        padding: 20px 10px;
     }
 
     .welcome-icon {
