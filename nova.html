@@ -38,23 +38,6 @@
             width: 18px;
             height: 18px;
         }
-    
-        .composer-disclaimer{display:flex;align-items:center;justify-content:center;gap:6px}.composer-disclaimer .kai-mark{width:13px;height:13px;flex-shrink:0}
-    
-        .composer-disclaimer .kai-disclaimer-mark {
-            width: 18px;
-            height: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: var(--accent);
-        }
-
-        .composer-disclaimer .kai-disclaimer-mark .kai-mark {
-            width: 14px;
-            height: 14px;
-        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
@@ -211,16 +194,7 @@
                         </div>
                     </form>
 
-                    <p class="composer-disclaimer">
-    <span class="kai-disclaimer-mark" aria-hidden="true">
-        <svg class="kai-mark" viewBox="0 0 32 32" fill="none">
-            <path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-            <path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="24" cy="8" r="2" fill="currentColor"/>
-        </svg>
-    </span>
-    <span>KAI can make mistakes. Check important information.</span>
-</p>
+                    <p class="composer-disclaimer">KAI can make mistakes. Check important information.</p>
                 </div>
             </section>
         </main>
