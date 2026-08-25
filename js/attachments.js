@@ -6,11 +6,43 @@ const removeImageButton = document.querySelector("#remove-image");
 
 let selectedImage = null;
 
+const attachmentStyle = document.createElement("style");
+attachmentStyle.textContent = `
+    #image-preview.image-selected {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    #image-preview.image-selected::before {
+        content: "🖼";
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(37, 99, 235, 0.16);
+        font-size: 16px;
+    }
+
+    #image-preview.image-selected #image-preview-img {
+        display: none !important;
+    }
+`;
+document.head.appendChild(attachmentStyle);
+
 function clearSelectedImage() {
     selectedImage = null;
+
     if (imageInput) imageInput.value = "";
     if (imagePreviewImg) imagePreviewImg.removeAttribute("src");
-    if (imagePreview) imagePreview.hidden = true;
+
+    if (imagePreview) {
+        imagePreview.classList.remove("image-selected");
+        imagePreview.hidden = true;
+    }
 }
 
 if (attachButton && imageInput) {
@@ -41,11 +73,17 @@ if (imageInput) {
         }
 
         const reader = new FileReader();
+
         reader.onload = () => {
             selectedImage = reader.result;
-            if (imagePreviewImg) imagePreviewImg.src = selectedImage;
-            if (imagePreview) imagePreview.hidden = false;
+
+            // Keep the image data for KAI, but show only an attachment icon in the UI.
+            if (imagePreview) {
+                imagePreview.classList.add("image-selected");
+                imagePreview.hidden = false;
+            }
         };
+
         reader.readAsDataURL(file);
     });
 }
@@ -57,6 +95,5 @@ if (removeImageButton) {
     });
 }
 
-// Expose the selected image for app.js to include in its Edge Function request.
 window.getKAISelectedImage = () => selectedImage;
 window.clearKAISelectedImage = clearSelectedImage;
