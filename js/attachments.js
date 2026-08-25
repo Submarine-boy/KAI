@@ -3,10 +3,10 @@ const imageInput = document.querySelector("#image-input");
 const imagePreview = document.querySelector("#image-preview");
 const imagePreviewImg = document.querySelector("#image-preview-img");
 const removeImageButton = document.querySelector("#remove-image");
+const messageInput = document.querySelector("#message-input");
 
 let selectedImage = null;
 
-// Create a filename label if the HTML does not already contain one.
 let imageFileName = document.querySelector("#image-file-name");
 if (imagePreview && !imageFileName) {
     imageFileName = document.createElement("span");
@@ -20,9 +20,9 @@ attachmentStyle.textContent = `
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        max-width: 100%;
+        max-width: calc(100% - 20px);
         padding: 8px 10px;
-        margin-bottom: 8px;
+        margin: 0 0 8px 0;
         border: 1px solid rgba(37, 99, 235, 0.25);
         border-radius: 12px;
         background: rgba(17, 24, 39, 0.95);
@@ -52,6 +52,14 @@ attachmentStyle.textContent = `
     }
 `;
 document.head.appendChild(attachmentStyle);
+
+// Keep the selected-image preview directly above the message placeholder.
+if (imagePreview && messageInput) {
+    const composer = messageInput.closest(".composer");
+    if (composer && imagePreview.parentElement !== composer) {
+        composer.insertBefore(imagePreview, messageInput);
+    }
+}
 
 function clearSelectedImage() {
     selectedImage = null;
@@ -98,7 +106,6 @@ if (imageInput) {
         reader.onload = () => {
             selectedImage = reader.result;
 
-            // Show the real image preview and its filename.
             if (imagePreviewImg) {
                 imagePreviewImg.src = selectedImage;
                 imagePreviewImg.alt = file.name;
