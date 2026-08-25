@@ -6,29 +6,49 @@ const removeImageButton = document.querySelector("#remove-image");
 
 let selectedImage = null;
 
+// Create a filename label if the HTML does not already contain one.
+let imageFileName = document.querySelector("#image-file-name");
+if (imagePreview && !imageFileName) {
+    imageFileName = document.createElement("span");
+    imageFileName.id = "image-file-name";
+    imagePreview.appendChild(imageFileName);
+}
+
 const attachmentStyle = document.createElement("style");
 attachmentStyle.textContent = `
     #image-preview.image-selected {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        max-width: 100%;
         padding: 8px 10px;
-    }
-
-    #image-preview.image-selected::before {
-        content: "🖼";
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        background: rgba(37, 99, 235, 0.16);
-        font-size: 16px;
+        margin-bottom: 8px;
+        border: 1px solid rgba(37, 99, 235, 0.25);
+        border-radius: 12px;
+        background: rgba(17, 24, 39, 0.95);
     }
 
     #image-preview.image-selected #image-preview-img {
-        display: none !important;
+        display: block !important;
+        width: 42px !important;
+        height: 42px !important;
+        flex-shrink: 0;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    #image-file-name {
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: var(--text, #fff);
+        font-size: 12px;
+    }
+
+    #remove-image {
+        flex-shrink: 0;
     }
 `;
 document.head.appendChild(attachmentStyle);
@@ -38,6 +58,7 @@ function clearSelectedImage() {
 
     if (imageInput) imageInput.value = "";
     if (imagePreviewImg) imagePreviewImg.removeAttribute("src");
+    if (imageFileName) imageFileName.textContent = "";
 
     if (imagePreview) {
         imagePreview.classList.remove("image-selected");
@@ -77,7 +98,17 @@ if (imageInput) {
         reader.onload = () => {
             selectedImage = reader.result;
 
-            // Keep the image data for KAI, but show only an attachment icon in the UI.
+            // Show the real image preview and its filename.
+            if (imagePreviewImg) {
+                imagePreviewImg.src = selectedImage;
+                imagePreviewImg.alt = file.name;
+            }
+
+            if (imageFileName) {
+                imageFileName.textContent = file.name;
+                imageFileName.title = file.name;
+            }
+
             if (imagePreview) {
                 imagePreview.classList.add("image-selected");
                 imagePreview.hidden = false;
