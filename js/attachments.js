@@ -20,7 +20,7 @@ attachmentStyle.textContent = `
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        max-width: calc(100% - 20px);
+        max-width: 100%;
         padding: 8px 10px;
         margin: 0 0 8px 0;
         border: 1px solid rgba(37, 99, 235, 0.25);
@@ -53,11 +53,14 @@ attachmentStyle.textContent = `
 `;
 document.head.appendChild(attachmentStyle);
 
-// Keep the selected-image preview directly above the message placeholder.
+// Put the preview ABOVE the entire text box, not inside the composer.
 if (imagePreview && messageInput) {
     const composer = messageInput.closest(".composer");
-    if (composer && imagePreview.parentElement !== composer) {
-        composer.insertBefore(imagePreview, messageInput);
+    if (composer) {
+        const composerContainer = composer.closest(".composer-container");
+        if (composerContainer && imagePreview.parentElement !== composerContainer) {
+            composerContainer.insertBefore(imagePreview, composer);
+        }
     }
 }
 
