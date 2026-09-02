@@ -1178,3 +1178,326 @@ a {
         z-index: 1000 !important;
     }
 }
+
+
+
+/* =========================================================
+   KAI CHAT MESSAGES
+   Clean ChatGPT-style layout
+   ========================================================= */
+
+/* Main messages area */
+.chat-area {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 24px 140px;
+    box-sizing: border-box;
+}
+
+/* Every message row */
+.message {
+    width: 100%;
+    display: flex;
+    margin: 0 0 22px;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   USER MESSAGE
+   ========================================================= */
+
+.user-message {
+    justify-content: flex-end;
+    padding-left: 15%;
+}
+
+.user-message .message-content {
+    display: inline-block;
+
+    max-width: 75%;
+
+    padding: 10px 16px;
+
+    border-radius: 18px;
+
+    line-height: 1.5;
+    font-size: 15px;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   ASSISTANT MESSAGE
+   ========================================================= */
+
+.assistant-message {
+    justify-content: flex-start;
+
+    padding-right: 10%;
+}
+
+.assistant-message .message-content {
+    display: block;
+
+    max-width: 90%;
+
+    padding: 2px 0;
+
+    line-height: 1.65;
+    font-size: 15px;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    background: transparent;
+    border: none;
+}
+
+
+/* =========================================================
+   MESSAGE TEXT
+   ========================================================= */
+
+.message-content {
+    color: inherit;
+}
+
+
+/* =========================================================
+   CODE INSIDE ASSISTANT MESSAGES
+   ========================================================= */
+
+.assistant-message .message-content pre {
+    width: 100%;
+    max-width: 100%;
+
+    margin: 14px 0;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    overflow-x: auto;
+
+    box-sizing: border-box;
+}
+
+.assistant-message .message-content code {
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+    font-size: 13px;
+}
+
+
+/* Inline code */
+.assistant-message .message-content :not(pre) > code {
+    padding: 2px 5px;
+    border-radius: 5px;
+
+    font-size: 0.9em;
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+.assistant-message .message-content a {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   LISTS
+   ========================================================= */
+
+.assistant-message .message-content ul,
+.assistant-message .message-content ol {
+    margin: 10px 0;
+    padding-left: 24px;
+}
+
+.assistant-message .message-content li {
+    margin: 5px 0;
+}
+
+
+/* =========================================================
+   HEADINGS
+   ========================================================= */
+
+.assistant-message .message-content h1,
+.assistant-message .message-content h2,
+.assistant-message .message-content h3,
+.assistant-message .message-content h4 {
+    margin-top: 18px;
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   PARAGRAPHS
+   ========================================================= */
+
+.assistant-message .message-content p {
+    margin: 0 0 12px;
+}
+
+.assistant-message .message-content p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   QUOTES
+   ========================================================= */
+
+.assistant-message .message-content blockquote {
+    margin: 12px 0;
+
+    padding-left: 14px;
+
+    border-left: 3px solid currentColor;
+
+    opacity: 0.8;
+}
+
+
+/* =========================================================
+   TYPING INDICATOR
+   ========================================================= */
+
+.typing-message {
+    justify-content: flex-start;
+}
+
+.typing-message .message-content {
+    padding: 5px 0;
+}
+
+.typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    animation: kaiTyping 1.2s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes kaiTyping {
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.35;
+    }
+
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .chat-area {
+        width: 100%;
+        padding: 16px 14px 130px;
+    }
+
+    .message {
+        margin-bottom: 18px;
+    }
+
+    /* User bubbles */
+    .user-message {
+        padding-left: 8%;
+    }
+
+    .user-message .message-content {
+        max-width: 88%;
+
+        padding: 9px 14px;
+
+        border-radius: 17px;
+
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    /* Assistant */
+    .assistant-message {
+        padding-right: 3%;
+    }
+
+    .assistant-message .message-content {
+        max-width: 97%;
+
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .assistant-message .message-content pre {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .chat-area {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .user-message {
+        padding-left: 4%;
+    }
+
+    .user-message .message-content {
+        max-width: 91%;
+    }
+
+    .assistant-message {
+        padding-right: 1%;
+    }
+
+    .assistant-message .message-content {
+        max-width: 99%;
+    }
+}
