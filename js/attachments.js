@@ -4,17 +4,9 @@ const imagePreview = document.querySelector("#image-preview");
 const imagePreviewImg = document.querySelector("#image-preview-img");
 const removeImageButton = document.querySelector("#remove-image");
 const messageInput = document.querySelector("#message-input");
-const composer = messageInput?.form;
-const sendButton = composer?.querySelector(".send-button");
-const sendIcon = sendButton?.querySelector(".send-icon");
-const chatArea = document.querySelector(".chat-area");
 
 let selectedImage = null;
 let selectedFileName = "";
-let sendStateActive = false;
-let responseStarted = false;
-let settleTimer = null;
-let fallbackTimer = null;
 
 /*
    KAI image attachment tray
@@ -112,74 +104,6 @@ attachmentStyle.textContent = `
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Animated send button while KAI is sending/responding. */
-    .send-button.is-loading {
-        cursor: wait;
-        pointer-events: none;
-        transform: scale(0.96);
-        background: linear-gradient(135deg, var(--primary, #2563eb), var(--accent, #06b6d4));
-        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.28);
-        animation: kaiSendPulse 1.5s ease-in-out infinite;
-    }
-
-    .send-button.is-loading .send-icon {
-        width: 18px;
-        height: 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-        font-size: 0;
-    }
-
-    .send-button.is-loading .send-icon::before,
-    .send-button.is-loading .send-icon::after,
-    .send-button.is-loading .send-icon {
-        border-radius: 50%;
-    }
-
-    .send-button.is-loading .send-icon::before,
-    .send-button.is-loading .send-icon::after {
-        content: "";
-        width: 4px;
-        height: 4px;
-        background: currentColor;
-        animation: kaiSendDots 1s ease-in-out infinite;
-    }
-
-    .send-button.is-loading .send-icon {
-        background: radial-gradient(circle, currentColor 0 2px, transparent 2.5px) center / 6px 6px no-repeat;
-        animation: kaiSendDotCenter 1s ease-in-out infinite;
-    }
-
-    .send-button.is-loading .send-icon::after {
-        animation-delay: 0.16s;
-    }
-
-    @keyframes kaiSendDots {
-        0%, 100% { transform: translateY(2px); opacity: 0.35; }
-        50% { transform: translateY(-2px); opacity: 1; }
-    }
-
-    @keyframes kaiSendDotCenter {
-        0%, 100% { opacity: 0.45; transform: scale(0.8); }
-        50% { opacity: 1; transform: scale(1.08); }
-    }
-
-    @keyframes kaiSendPulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.2); }
-        50% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .send-button.is-loading,
-        .send-button.is-loading .send-icon,
-        .send-button.is-loading .send-icon::before,
-        .send-button.is-loading .send-icon::after {
-            animation: none;
-        }
-    }
-
     @media (max-width: 800px) {
         .composer-container > #image-preview {
             max-width: none;
@@ -212,11 +136,11 @@ document.head.appendChild(attachmentStyle);
 
 /* Move the tray outside the rounded composer so it truly sits above it. */
 if (imagePreview && messageInput) {
-    const composerElement = messageInput.closest(".composer");
-    const composerContainer = composerElement?.closest(".composer-container");
+    const composer = messageInput.closest(".composer");
+    const composerContainer = composer?.closest(".composer-container");
 
     if (composerContainer && imagePreview.parentElement !== composerContainer) {
-        composerContainer.insertBefore(imagePreview, composerElement);
+        composerContainer.insertBefore(imagePreview, composer);
     }
 }
 
@@ -303,100 +227,6 @@ if (removeImageButton) {
         event.preventDefault();
         clearSelectedImage();
         messageInput?.focus();
-    });
-}
-
-/* =========================================================
-   ANIMATED SEND STATE
-========================================================= */
-
-function setSendLoading(loading) {
-    if (!sendButton || !sendIcon) return;
-
-    sendStateActive = loading;
-    sendButton.classList.toggle("is-loading", loading);
-    sendButton.setAttribute("aria-busy", loading ? "true" : "false");
-    sendButton.setAttribute("aria-label", loading ? "KAI is responding" : "Send");
-    sendButton.title = loading ? "KAI is responding" : "Send";
-    sendButton.disabled = loading;
-
-    if (loading) {
-        sendIcon.textContent = "";
-    } else {
-        sendIcon.textContent = "↑";
-    }
-}
-
-function scheduleSendReset() {
-    clearTimeout(settleTimer);
-    settleTimer = setTimeout(() => {
-        if (sendStateActive) {
-            setSendLoading(false);
-        }
-    }, 500);
-}
-
-function observeResponseProgress() {
-    if (!chatArea || responseStarted) return;
-
-    const observer = new MutationObserver(mutations => {
-        let typingExists = !!document.querySelector("#typing-indicator");
-        let assistantChanged = false;
-
-        for (const mutation of mutations) {
-            if (mutation.target?.closest?.(".assistant-message")) {
-                assistantChanged = true;
-                break;
-            }
-
-            if ([...mutation.addedNodes, ...mutation.removedNodes].some(node =>
-                node.nodeType === Node.ELEMENT_NODE &&
-                (node.matches?.(".assistant-message, #typing-indicator") ||
-                 node.querySelector?.(".assistant-message, #typing-indicator"))
-            )) {
-                assistantChanged = true;
-            }
-        }
-
-        if (typingExists) {
-            responseStarted = true;
-            clearTimeout(settleTimer);
-            return;
-        }
-
-        if (responseStarted && assistantChanged) {
-            scheduleSendReset();
-        }
-    });
-
-    observer.observe(chatArea, {
-        childList: true,
-        subtree: true,
-        characterData: true
-    });
-}
-
-if (composer && sendButton) {
-    composer.addEventListener("submit", event => {
-        const message = messageInput?.value.trim();
-
-        if (!message || sendStateActive) {
-            return;
-        }
-
-        responseStarted = false;
-        clearTimeout(settleTimer);
-        clearTimeout(fallbackTimer);
-        setSendLoading(true);
-
-        observeResponseProgress();
-
-        /* Safety reset if a request fails before the typing indicator appears. */
-        fallbackTimer = setTimeout(() => {
-            if (sendStateActive && !responseStarted) {
-                setSendLoading(false);
-            }
-        }, 30000);
     });
 }
 

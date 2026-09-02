@@ -8,7 +8,6 @@ const chatArea = document.querySelector(".chat-area");
 const composer = document.querySelector(".composer");
 const messageInput = document.querySelector("#message-input");
 const welcome = document.querySelector(".welcome");
-const sendButton = composer?.querySelector('button[type="submit"]');
 
 const newChatButton = document.querySelector(".new-chat");
 const mobileMenuButton = document.querySelector(".mobile-menu");
@@ -33,40 +32,6 @@ const accountAvatar = document.querySelector(".account-avatar");
 let currentUser = null;
 let currentChatId = null;
 let messages = [];
-let isSending = false;
-
-/* =========================================================
-   SEND BUTTON STATE
-========================================================= */
-
-function setSendButtonLoading(loading) {
-
-    if (!sendButton) {
-        return;
-    }
-
-    isSending = loading;
-    sendButton.disabled = loading;
-    sendButton.classList.toggle("is-loading", loading);
-    sendButton.setAttribute("aria-busy", loading ? "true" : "false");
-
-    if (loading) {
-        sendButton.dataset.originalContent = sendButton.innerHTML;
-        sendButton.innerHTML = `
-            <span class="send-loading-dots" aria-hidden="true">
-                <span></span><span></span><span></span>
-            </span>
-            <span class="sr-only">KAI is responding</span>
-        `;
-        sendButton.title = "KAI is responding";
-    } else {
-        sendButton.innerHTML = sendButton.dataset.originalContent || `
-            <span aria-hidden="true">↑</span>
-        `;
-        sendButton.title = "Send message";
-        sendButton.removeAttribute("aria-busy");
-    }
-}
 
 /* =========================================================
    INITIALIZE
@@ -173,6 +138,7 @@ function openAccountPopup() {
     }
 }
 
+
 function closeAccountPopup() {
 
     if (!accountPopup) {
@@ -192,6 +158,7 @@ function closeAccountPopup() {
         sidebarBottom.classList.remove("profile-open");
     }
 }
+
 
 function toggleAccountPopup(event) {
 
@@ -214,29 +181,54 @@ function toggleAccountPopup(event) {
     }
 }
 
+
+/* Profile button */
+
 if (userProfileButton) {
-    userProfileButton.addEventListener("click", toggleAccountPopup);
+
+    userProfileButton.addEventListener(
+        "click",
+        toggleAccountPopup
+    );
+
 }
+
+
+/* Prevent popup clicks from closing it */
 
 if (accountPopup) {
-    accountPopup.addEventListener("click", event => {
-        event.stopPropagation();
-    });
+
+    accountPopup.addEventListener(
+        "click",
+        event => {
+            event.stopPropagation();
+        }
+    );
+
 }
 
-document.addEventListener("click", event => {
 
-    if (!accountPopup) {
-        return;
-    }
+/* Click outside */
 
-    if (
-        !event.target.closest(".account-popup") &&
-        !event.target.closest(".user-profile")
-    ) {
-        closeAccountPopup();
+document.addEventListener(
+    "click",
+    event => {
+
+        if (!accountPopup) {
+            return;
+        }
+
+        if (
+            !event.target.closest(".account-popup") &&
+            !event.target.closest(".user-profile")
+        ) {
+
+            closeAccountPopup();
+
+        }
+
     }
-});
+);
 
 /* =========================================================
    LOGOUT
@@ -323,48 +315,87 @@ function renderChatHistory(chats) {
 
     if (chats.length === 0) {
 
-        const empty = document.createElement("p");
-        empty.className = "history-title";
-        empty.textContent = "No previous chats";
+        const empty =
+            document.createElement("p");
+
+        empty.className =
+            "history-title";
+
+        empty.textContent =
+            "No previous chats";
+
         chatHistory.appendChild(empty);
+
         return;
     }
 
-    const title = document.createElement("p");
-    title.className = "history-title";
-    title.textContent = "Recent chats";
+    const title =
+        document.createElement("p");
+
+    title.className =
+        "history-title";
+
+    title.textContent =
+        "Recent chats";
+
     chatHistory.appendChild(title);
 
     chats.forEach(chat => {
 
-        const item = document.createElement("div");
-        item.className = "history-item";
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "history-item";
 
         if (chat.id === currentChatId) {
             item.classList.add("active");
         }
 
-        item.dataset.chatId = chat.id;
+        item.dataset.chatId =
+            chat.id;
 
         item.innerHTML = `
             <span class="history-icon"><svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg></span>
-            <span class="history-name">${escapeHTML(chat.title)}</span>
-            <button class="history-menu" type="button" title="Delete chat">⋯</button>
+
+            <span class="history-name">
+                ${escapeHTML(chat.title)}
+            </span>
+
+            <button
+                class="history-menu"
+                type="button"
+                title="Delete chat"
+            >
+                ⋯
+            </button>
         `;
 
-        item.addEventListener("click", async event => {
+        item.addEventListener(
+            "click",
+            async event => {
 
-            if (event.target.classList.contains("history-menu")) {
-                event.stopPropagation();
-                await deleteChat(chat.id);
-                return;
+                if (
+                    event.target.classList.contains(
+                        "history-menu"
+                    )
+                ) {
+
+                    event.stopPropagation();
+
+                    await deleteChat(chat.id);
+
+                    return;
+                }
+
+                await openChat(chat.id);
+
+                closeMobileSidebar();
             }
-
-            await openChat(chat.id);
-            closeMobileSidebar();
-        });
+        );
 
         chatHistory.appendChild(item);
+
     });
 }
 
@@ -396,8 +427,11 @@ async function createChat(title) {
         return null;
     }
 
-    currentChatId = data.id;
+    currentChatId =
+        data.id;
+
     await loadChats();
+
     return data;
 }
 
@@ -429,22 +463,36 @@ async function openChat(chatId) {
         return;
     }
 
-    currentChatId = chatId;
-    messages = data || [];
+    currentChatId =
+        chatId;
+
+    messages =
+        data || [];
 
     clearDisplayedMessages();
+
     hideWelcome();
 
     messages.forEach(message => {
 
         if (message.role === "user") {
-            addUserMessage(message.content);
+
+            addUserMessage(
+                message.content
+            );
+
         } else {
-            addAssistantMessage(message.content);
+
+            addAssistantMessage(
+                message.content
+            );
+
         }
+
     });
 
     await loadChats();
+
     scrollToBottom();
 }
 
@@ -460,46 +508,56 @@ if (composer) {
 
             event.preventDefault();
 
-            if (isSending) {
-                return;
-            }
-
-            const message = messageInput.value.trim();
+            const message =
+                messageInput.value.trim();
 
             if (!message) {
                 return;
             }
 
             if (!currentUser) {
-                console.error("No authenticated user.");
+
+                console.error(
+                    "No authenticated user."
+                );
+
                 return;
             }
 
-            setSendButtonLoading(true);
+            if (!currentChatId) {
+
+                const title =
+                    createChatTitle(message);
+
+                const chat =
+                    await createChat(title);
+
+                if (!chat) {
+
+                    console.error(
+                        "Chat could not be created."
+                    );
+
+                    return;
+                }
+            }
+
+            messageInput.value = "";
+
+            autoResize();
+
+            hideWelcome();
+
+            const savedUserMessage =
+                await saveUserMessage(message);
+
+            if (!savedUserMessage) {
+                return;
+            }
+
+            showTypingIndicator();
 
             try {
-
-                if (!currentChatId) {
-
-                    const title = createChatTitle(message);
-                    const chat = await createChat(title);
-
-                    if (!chat) {
-                        throw new Error("Chat could not be created.");
-                    }
-                }
-
-                messageInput.value = "";
-                autoResize();
-                hideWelcome();
-
-                const savedUserMessage = await saveUserMessage(message);
-
-                if (!savedUserMessage) {
-                    throw new Error("Message could not be saved.");
-                }
-
-                showTypingIndicator();
 
                 const conversation =
                     messages
@@ -526,7 +584,10 @@ if (composer) {
                 }
 
                 if (!data?.response) {
-                    throw new Error("KAI returned no response.");
+
+                    throw new Error(
+                        "KAI returned no response."
+                    );
                 }
 
                 removeTypingIndicator();
@@ -540,17 +601,19 @@ if (composer) {
 
                 removeTypingIndicator();
 
-                console.error("KAI ERROR:", error);
+                console.error(
+                    "KAI ERROR:",
+                    error
+                );
 
                 addAssistantMessage(
                     "Sorry, I couldn't connect to KAI right now. Please try again."
                 );
-
-            } finally {
-                setSendButtonLoading(false);
             }
+
         }
     );
+
 }
 
 /* =========================================================
@@ -584,7 +647,9 @@ async function saveUserMessage(message) {
     }
 
     messages.push(data);
+
     addUserMessage(message);
+
     await updateChatTimestamp();
 
     return data;
@@ -594,7 +659,10 @@ async function saveUserMessage(message) {
    SAVE ASSISTANT MESSAGE
 ========================================================= */
 
-async function saveAssistantMessage(message, animate = false) {
+async function saveAssistantMessage(
+    message,
+    animate = false
+) {
 
     const {
         data,
@@ -623,12 +691,21 @@ async function saveAssistantMessage(message, animate = false) {
     messages.push(data);
 
     if (animate) {
-        await typeAssistantMessage(message);
+
+        await typeAssistantMessage(
+            message
+        );
+
     } else {
-        addAssistantMessage(message);
+
+        addAssistantMessage(
+            message
+        );
+
     }
 
     await updateChatTimestamp();
+
     return data;
 }
 
@@ -643,13 +720,25 @@ async function updateChatTimestamp() {
     } = await supabase
         .from("chats")
         .update({
-            updated_at: new Date().toISOString()
+            updated_at:
+                new Date().toISOString()
         })
-        .eq("id", currentChatId)
-        .eq("user_id", currentUser.id);
+        .eq(
+            "id",
+            currentChatId
+        )
+        .eq(
+            "user_id",
+            currentUser.id
+        );
 
     if (error) {
-        console.error("UPDATE CHAT ERROR:", error);
+
+        console.error(
+            "UPDATE CHAT ERROR:",
+            error
+        );
+
         return;
     }
 
@@ -666,11 +755,8 @@ if (newChatButton) {
         "click",
         () => {
 
-            if (isSending) {
-                return;
-            }
-
             currentChatId = null;
+
             messages = [];
 
             clearDisplayedMessages();
@@ -680,12 +766,17 @@ if (newChatButton) {
             }
 
             messageInput.value = "";
+
             autoResize();
+
             messageInput.focus();
+
             closeMobileSidebar();
+
             loadChats();
         }
     );
+
 }
 
 /* =========================================================
@@ -694,7 +785,10 @@ if (newChatButton) {
 
 async function deleteChat(chatId) {
 
-    const confirmed = confirm("Delete this conversation?");
+    const confirmed =
+        confirm(
+            "Delete this conversation?"
+        );
 
     if (!confirmed) {
         return;
@@ -705,17 +799,31 @@ async function deleteChat(chatId) {
     } = await supabase
         .from("chats")
         .delete()
-        .eq("id", chatId)
-        .eq("user_id", currentUser.id);
+        .eq(
+            "id",
+            chatId
+        )
+        .eq(
+            "user_id",
+            currentUser.id
+        );
 
     if (error) {
-        console.error("DELETE CHAT ERROR:", error);
+
+        console.error(
+            "DELETE CHAT ERROR:",
+            error
+        );
+
         return;
     }
 
     if (currentChatId === chatId) {
+
         currentChatId = null;
+
         messages = [];
+
         clearDisplayedMessages();
 
         if (welcome) {
@@ -732,8 +840,11 @@ async function deleteChat(chatId) {
 
 function addUserMessage(message) {
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "message-wrapper user-message-wrapper";
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message-wrapper user-message-wrapper";
 
     wrapper.innerHTML = `
         <div class="message user-message">
@@ -743,7 +854,9 @@ function addUserMessage(message) {
 
     chatArea.insertBefore(
         wrapper,
-        document.querySelector(".composer-container")
+        document.querySelector(
+            ".composer-container"
+        )
     );
 
     scrollToBottom();
@@ -755,26 +868,40 @@ function addUserMessage(message) {
 
 function addAssistantMessage(message) {
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "message-wrapper assistant-message-wrapper";
+    const wrapper =
+        document.createElement("div");
 
-    const avatar = document.createElement("div");
-    avatar.className = "assistant-avatar";
+    wrapper.className =
+        "message-wrapper assistant-message-wrapper";
+
+    const avatar =
+        document.createElement("div");
+
+    avatar.className =
+        "assistant-avatar";
 
     avatar.innerHTML = `<svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg>`;
 
-    const messageElement = document.createElement("div");
-    messageElement.className = "message assistant-message";
+    const messageElement =
+        document.createElement("div");
 
-    const markdownHTML = marked.parse(message);
-    messageElement.innerHTML = DOMPurify.sanitize(markdownHTML);
+    messageElement.className =
+        "message assistant-message";
+
+    const markdownHTML =
+        marked.parse(message);
+
+    messageElement.innerHTML =
+        DOMPurify.sanitize(markdownHTML);
 
     wrapper.appendChild(avatar);
     wrapper.appendChild(messageElement);
 
     chatArea.insertBefore(
         wrapper,
-        document.querySelector(".composer-container")
+        document.querySelector(
+            ".composer-container"
+        )
     );
 
     scrollToBottom();
@@ -786,31 +913,43 @@ function addAssistantMessage(message) {
 
 async function typeAssistantMessage(message) {
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "message-wrapper assistant-message-wrapper";
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message-wrapper assistant-message-wrapper";
 
     wrapper.innerHTML = `
         <div class="assistant-avatar"><svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg></div>
+
         <div class="message assistant-message"></div>
     `;
 
     chatArea.insertBefore(
         wrapper,
-        document.querySelector(".composer-container")
+        document.querySelector(
+            ".composer-container"
+        )
     );
 
-    const messageElement = wrapper.querySelector(".assistant-message");
+    const messageElement =
+        wrapper.querySelector(
+            ".assistant-message"
+        );
+
     let currentText = "";
 
     for (const character of message) {
 
         currentText += character;
 
-        messageElement.innerHTML = DOMPurify.sanitize(
-            marked.parse(currentText)
-        );
+        messageElement.innerHTML =
+            DOMPurify.sanitize(
+                marked.parse(currentText)
+            );
 
         scrollToBottom();
+
         await wait(15);
     }
 }
@@ -834,26 +973,42 @@ function clearDisplayedMessages() {
 
 function showTypingIndicator() {
 
-    const typing = document.createElement("div");
-    typing.id = "typing-indicator";
-    typing.className = "message-wrapper";
+    const typing =
+        document.createElement("div");
+
+    typing.id =
+        "typing-indicator";
+
+    typing.className =
+        "message-wrapper";
 
     typing.innerHTML = `
         <div class="assistant-avatar"><svg class="kai-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 7V25" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M23 7L10 16L23 25" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="8" r="2" fill="currentColor"/></svg></div>
-        <div class="typing-indicator"><span></span><span></span><span></span></div>
+
+        <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     `;
 
     chatArea.insertBefore(
         typing,
-        document.querySelector(".composer-container")
+        document.querySelector(
+            ".composer-container"
+        )
     );
 
     scrollToBottom();
 }
 
+
 function removeTypingIndicator() {
 
-    const typing = document.querySelector("#typing-indicator");
+    const typing =
+        document.querySelector(
+            "#typing-indicator"
+        );
 
     if (typing) {
         typing.remove();
@@ -872,24 +1027,33 @@ document
             "click",
             () => {
 
-                if (isSending) {
-                    return;
-                }
-
-                const title = button.querySelector("strong")?.textContent;
+                const title =
+                    button.querySelector(
+                        "strong"
+                    )?.textContent;
 
                 if (!title) {
                     return;
                 }
 
                 const prompts = {
-                    "Explain something": "Explain an interesting concept to me.",
-                    "Write some code": "Help me build a website.",
-                    "Help me write": "Help me write something.",
-                    "Brainstorm ideas": "Help me brainstorm some ideas."
+
+                    "Explain something":
+                        "Explain an interesting concept to me.",
+
+                    "Write some code":
+                        "Help me build a website.",
+
+                    "Help me write":
+                        "Help me write something.",
+
+                    "Brainstorm ideas":
+                        "Help me brainstorm some ideas."
                 };
 
-                messageInput.value = prompts[title] || title;
+                messageInput.value =
+                    prompts[title] || title;
+
                 composer.requestSubmit();
             }
         );
@@ -901,7 +1065,10 @@ document
 
 if (messageInput) {
 
-    messageInput.addEventListener("input", autoResize);
+    messageInput.addEventListener(
+        "input",
+        autoResize
+    );
 
     messageInput.addEventListener(
         "keydown",
@@ -914,12 +1081,11 @@ if (messageInput) {
 
                 event.preventDefault();
 
-                if (!isSending) {
-                    composer.requestSubmit();
-                }
+                composer.requestSubmit();
             }
         }
     );
+
 }
 
 function autoResize() {
@@ -928,70 +1094,43 @@ function autoResize() {
         return;
     }
 
-    messageInput.style.height = "auto";
-    messageInput.style.height = Math.min(messageInput.scrollHeight, 180) + "px";
+    messageInput.style.height =
+        "auto";
+
+    messageInput.style.height =
+        Math.min(
+            messageInput.scrollHeight,
+            180
+        ) + "px";
 }
 
-// ================================
-// MOBILE SIDEBAR
-// ================================
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
 
-const mobileMenuButton = document.querySelector(".mobile-menu");
-const closeSidebarButton = document.querySelector(".close-sidebar");
-const sidebar = document.querySelector(".sidebar");
+mobileMenuButton?.addEventListener(
+    "click",
+    () => {
 
-function openMobileSidebar() {
-    if (!sidebar) return;
+        sidebar.style.left = "0";
+    }
+);
 
-    sidebar.classList.add("mobile-open");
-    document.body.classList.add("sidebar-open");
-
-    // Force the sidebar into view on mobile
-    sidebar.style.left = "0px";
-}
+closeSidebarButton?.addEventListener(
+    "click",
+    closeMobileSidebar
+);
 
 function closeMobileSidebar() {
-    if (!sidebar) return;
 
-    sidebar.classList.remove("mobile-open");
-    document.body.classList.remove("sidebar-open");
+    if (
+        window.innerWidth <= 800
+    ) {
 
-    sidebar.style.left = "";
+        sidebar.style.left =
+            "-280px";
+    }
 }
-
-// Open sidebar
-mobileMenuButton?.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    openMobileSidebar();
-});
-
-// Close sidebar
-closeSidebarButton?.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    closeMobileSidebar();
-});
-
-// Close sidebar when a chat is selected
-document.addEventListener("click", (event) => {
-    const chatItem = event.target.closest(
-        ".chat-item, .history-item"
-    );
-
-    if (chatItem && window.innerWidth <= 768) {
-        closeMobileSidebar();
-    }
-});
-
-// Reset mobile state when returning to desktop
-window.addEventListener("resize", () => {
-    if (window.innerWidth > 768) {
-        closeMobileSidebar();
-    }
-});
 
 /* =========================================================
    HELPERS
@@ -999,29 +1138,19 @@ window.addEventListener("resize", () => {
 
 function createChatTitle(message) {
 
-    const cleaned = message.replace(/\s+/g, " ").trim();
+    const cleaned =
+        message
+            .replace(/\s+/g, " ")
+            .trim();
 
     if (cleaned.length <= 40) {
         return cleaned;
     }
 
-    return cleaned.slice(0, 40) + "…";
-}
-
-function escapeHTML(value) {
-
-    const div = document.createElement("div");
-    div.textContent = value ?? "";
-    return div.innerHTML;
-}
-
-function scrollToBottom() {
-
-    if (!chatArea) {
-        return;
-    }
-
-    chatArea.scrollTop = chatArea.scrollHeight;
+    return (
+        cleaned.substring(0, 40) +
+        "..."
+    );
 }
 
 function hideWelcome() {
@@ -1031,6 +1160,36 @@ function hideWelcome() {
     }
 }
 
-function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function scrollToBottom() {
+
+    requestAnimationFrame(() => {
+
+        chatArea.scrollTo({
+            top: chatArea.scrollHeight,
+            behavior: "smooth"
+        });
+
+    });
+}
+
+function wait(milliseconds) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                milliseconds
+            )
+    );
+}
+
+function escapeHTML(text) {
+
+    const element =
+        document.createElement("div");
+
+    element.textContent =
+        text;
+
+    return element.innerHTML;
 }
