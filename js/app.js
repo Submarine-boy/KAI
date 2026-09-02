@@ -932,22 +932,66 @@ function autoResize() {
     messageInput.style.height = Math.min(messageInput.scrollHeight, 180) + "px";
 }
 
-/* =========================================================
-   MOBILE SIDEBAR
-========================================================= */
+// ================================
+// MOBILE SIDEBAR
+// ================================
 
-mobileMenuButton?.addEventListener("click", () => {
-    sidebar.style.left = "0";
-});
+const mobileMenuButton = document.querySelector(".mobile-menu");
+const closeSidebarButton = document.querySelector(".close-sidebar");
+const sidebar = document.querySelector(".sidebar");
 
-closeSidebarButton?.addEventListener("click", closeMobileSidebar);
+function openMobileSidebar() {
+    if (!sidebar) return;
+
+    sidebar.classList.add("mobile-open");
+    document.body.classList.add("sidebar-open");
+
+    // Force the sidebar into view on mobile
+    sidebar.style.left = "0px";
+}
 
 function closeMobileSidebar() {
+    if (!sidebar) return;
 
-    if (window.innerWidth <= 800) {
-        sidebar.style.left = "-280px";
-    }
+    sidebar.classList.remove("mobile-open");
+    document.body.classList.remove("sidebar-open");
+
+    sidebar.style.left = "";
 }
+
+// Open sidebar
+mobileMenuButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    openMobileSidebar();
+});
+
+// Close sidebar
+closeSidebarButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    closeMobileSidebar();
+});
+
+// Close sidebar when a chat is selected
+document.addEventListener("click", (event) => {
+    const chatItem = event.target.closest(
+        ".chat-item, .history-item"
+    );
+
+    if (chatItem && window.innerWidth <= 768) {
+        closeMobileSidebar();
+    }
+});
+
+// Reset mobile state when returning to desktop
+window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+        closeMobileSidebar();
+    }
+});
 
 /* =========================================================
    HELPERS
