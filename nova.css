@@ -1124,3 +1124,57 @@ a {
         z-index: 100 !important;
     }
 }
+
+/* ========================================
+   MOBILE SIDEBAR
+   ======================================== */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        position: fixed !important;
+        top: 0;
+        bottom: 0;
+        left: -100% !important;
+        z-index: 1000;
+        transition: left 0.25s ease;
+    }
+
+    .sidebar.mobile-open {
+        left: 0 !important;
+    }
+
+    .mobile-menu {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        z-index: 1100;
+    }
+
+    .close-sidebar {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    body.sidebar-open {
+        overflow: hidden;
+    }
+
+    /*
+     * Keep the message composer underneath
+     * the sidebar when it is open.
+     */
+    body.sidebar-open .message-composer,
+    body.sidebar-open .composer,
+    body.sidebar-open .chat-input-container {
+        z-index: 1 !important;
+    }
+
+    body.sidebar-open .sidebar {
+        z-index: 1000 !important;
+    }
+}
