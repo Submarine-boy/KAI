@@ -6,7 +6,145 @@ const removeImageButton = document.querySelector("#remove-image");
 const messageInput = document.querySelector("#message-input");
 
 let selectedImage = null;
+let selectedFileName = "";
 
+/*
+   KAI image attachment tray
+   - Keeps the preview above the composer
+   - Uses a compact ChatGPT-style thumbnail
+   - Replaces the previous image when another is selected
+   - Clears automatically after a message is submitted
+*/
+
+const attachmentStyle = document.createElement("style");
+attachmentStyle.textContent = `
+    /* Attachment tray sits outside the composer, directly above it. */
+    .composer-container > #image-preview {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto 8px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-sizing: border-box;
+    }
+
+    .composer-container > #image-preview.image-selected {
+        display: flex !important;
+        align-items: center;
+        gap: 10px;
+        width: fit-content;
+        max-width: min(100%, 900px);
+        min-height: 58px;
+        padding: 7px 9px 7px 7px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 14px;
+        background: rgba(17, 24, 39, 0.94);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        animation: kaiAttachmentIn 0.18s ease-out;
+    }
+
+    .composer-container > #image-preview #image-preview-img {
+        display: block !important;
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px;
+        min-height: 46px;
+        object-fit: cover;
+        border-radius: 9px;
+        background: var(--surface, #111827);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #image-file-name {
+        min-width: 0;
+        max-width: 230px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--text, #f8fafc);
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    #image-file-name::after {
+        content: "";
+        display: block;
+        color: var(--dim, #778196);
+        font-size: 10px;
+    }
+
+    .composer-container > #image-preview #remove-image {
+        width: 25px;
+        height: 25px;
+        flex: 0 0 25px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 2px;
+        padding: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--muted, #a7b0c0);
+        font-size: 18px;
+        line-height: 1;
+        transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .composer-container > #image-preview #remove-image:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: var(--text, #f8fafc);
+        transform: scale(1.05);
+    }
+
+    @keyframes kaiAttachmentIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 800px) {
+        .composer-container > #image-preview {
+            max-width: none;
+            margin: 0 0 7px;
+            padding: 0 3px;
+        }
+
+        .composer-container > #image-preview.image-selected {
+            max-width: calc(100% - 6px);
+            min-height: 52px;
+            padding: 6px 8px 6px 6px;
+            border-radius: 13px;
+        }
+
+        .composer-container > #image-preview #image-preview-img {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px;
+            min-height: 40px;
+            border-radius: 8px;
+        }
+
+        #image-file-name {
+            max-width: calc(100vw - 120px);
+            font-size: 11px;
+        }
+    }
+`;
+document.head.appendChild(attachmentStyle);
+
+/* Move the tray outside the rounded composer so it truly sits above it. */
+if (imagePreview && messageInput) {
+    const composer = messageInput.closest(".composer");
+    const composerContainer = composer?.closest(".composer-container");
+
+    if (composerContainer && imagePreview.parentElement !== composerContainer) {
+        composerContainer.insertBefore(imagePreview, composer);
+    }
+}
+
+/* Add the filename element without changing nova.html. */
 let imageFileName = document.querySelector("#image-file-name");
 if (imagePreview && !imageFileName) {
     imageFileName = document.createElement("span");
@@ -14,62 +152,16 @@ if (imagePreview && !imageFileName) {
     imagePreview.appendChild(imageFileName);
 }
 
-const attachmentStyle = document.createElement("style");
-attachmentStyle.textContent = `
-    #image-preview.image-selected {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        max-width: 100%;
-        padding: 8px 10px;
-        margin: 0 0 8px 0;
-        border: 1px solid rgba(37, 99, 235, 0.25);
-        border-radius: 12px;
-        background: rgba(17, 24, 39, 0.95);
-    }
-
-    #image-preview.image-selected #image-preview-img {
-        display: block !important;
-        width: 42px !important;
-        height: 42px !important;
-        flex-shrink: 0;
-        object-fit: cover;
-        border-radius: 8px;
-    }
-
-    #image-file-name {
-        min-width: 0;
-        flex: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        color: var(--text, #fff);
-        font-size: 12px;
-    }
-
-    #remove-image {
-        flex-shrink: 0;
-    }
-`;
-document.head.appendChild(attachmentStyle);
-
-// Put the preview ABOVE the entire text box, not inside the composer.
-if (imagePreview && messageInput) {
-    const composer = messageInput.closest(".composer");
-    if (composer) {
-        const composerContainer = composer.closest(".composer-container");
-        if (composerContainer && imagePreview.parentElement !== composerContainer) {
-            composerContainer.insertBefore(imagePreview, composer);
-        }
-    }
-}
-
 function clearSelectedImage() {
     selectedImage = null;
+    selectedFileName = "";
 
     if (imageInput) imageInput.value = "";
     if (imagePreviewImg) imagePreviewImg.removeAttribute("src");
-    if (imageFileName) imageFileName.textContent = "";
+    if (imageFileName) {
+        imageFileName.textContent = "";
+        imageFileName.removeAttribute("title");
+    }
 
     if (imagePreview) {
         imagePreview.classList.remove("image-selected");
@@ -80,7 +172,7 @@ function clearSelectedImage() {
 if (attachButton && imageInput) {
     attachButton.type = "button";
 
-    attachButton.addEventListener("click", (event) => {
+    attachButton.addEventListener("click", event => {
         event.preventDefault();
         event.stopPropagation();
         imageInput.click();
@@ -108,6 +200,7 @@ if (imageInput) {
 
         reader.onload = () => {
             selectedImage = reader.result;
+            selectedFileName = file.name;
 
             if (imagePreviewImg) {
                 imagePreviewImg.src = selectedImage;
@@ -130,11 +223,20 @@ if (imageInput) {
 }
 
 if (removeImageButton) {
-    removeImageButton.addEventListener("click", (event) => {
+    removeImageButton.addEventListener("click", event => {
         event.preventDefault();
         clearSelectedImage();
+        messageInput?.focus();
+    });
+}
+
+/* The existing app.js handles sending. Clear the pending visual attachment afterwards. */
+if (messageInput?.form) {
+    messageInput.form.addEventListener("submit", () => {
+        setTimeout(clearSelectedImage, 0);
     });
 }
 
 window.getKAISelectedImage = () => selectedImage;
+window.getKAISelectedImageName = () => selectedFileName;
 window.clearKAISelectedImage = clearSelectedImage;
