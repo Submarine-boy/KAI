@@ -510,11 +510,20 @@ if (composer) {
 
             const message =
                 messageInput.value.trim();
-
-            if (!message) {
+            
+            const selectedImage =
+                typeof window.getKAISelectedImage === "function"
+                    ? window.getKAISelectedImage()
+                    : null;
+            
+            const selectedImageName =
+                typeof window.getKAISelectedImageName === "function"
+                    ? window.getKAISelectedImageName()
+                    : "";
+            
+            if (!message && !selectedImage) {
                 return;
             }
-
             if (!currentUser) {
 
                 console.error(
@@ -548,12 +557,15 @@ if (composer) {
 
             hideWelcome();
 
-            const savedUserMessage =
-                await saveUserMessage(message);
-
-            if (!savedUserMessage) {
-                return;
-            }
+            const messageToSave =
+                   message || `[Image: ${selectedImageName || "attachment"}]`;
+               
+               const savedUserMessage =
+                   await saveUserMessage(messageToSave);
+               
+               if (!savedUserMessage) {
+                   return;
+               }
 
             showTypingIndicator();
 
@@ -568,16 +580,18 @@ if (composer) {
                         }));
 
                 const {
-                    data,
-                    error
-                } = await supabase.functions.invoke(
-                    "swift-task",
-                    {
-                        body: {
-                            messages: conversation
-                        }
-                    }
-                );
+                      data,
+                      error
+                  } = await supabase.functions.invoke(
+                      "swift-task",
+                      {
+                          body: {
+                              messages: conversation,
+                              image: selectedImage,
+                              image_name: selectedImageName
+                          }
+                      }
+                  );
 
                 if (error) {
                     throw error;
