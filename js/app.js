@@ -1126,7 +1126,15 @@ mobileMenuButton?.addEventListener(
     "click",
     () => {
 
-        sidebar.style.left = "0";
+        if (!sidebar) {
+            return;
+        }
+
+        sidebar.classList.add("mobile-sidebar-open");
+
+        document.body.classList.add(
+            "sidebar-is-open"
+        );
     }
 );
 
@@ -1137,13 +1145,18 @@ closeSidebarButton?.addEventListener(
 
 function closeMobileSidebar() {
 
-    if (
-        window.innerWidth <= 800
-    ) {
-
-        sidebar.style.left =
-            "-280px";
+    if (!sidebar) {
+        return;
     }
+
+    sidebar.classList.remove(
+        "mobile-sidebar-open"
+    );
+
+    document.body.classList.remove(
+        "sidebar-is-open"
+    );
+}
 }
 
 /* =========================================================
