@@ -475,21 +475,22 @@ async function openChat(chatId) {
 
     messages.forEach(message => {
 
-        if (message.role === "user") {
-
-            addUserMessage(
-                message.content
-            );
-
-        } else {
-
-            addAssistantMessage(
-                message.content
-            );
-
-        }
-
-    });
+       if (message.role === "user") {
+   
+           addUserMessage(
+               message.content,
+               message.image_url
+           );
+   
+       } else {
+   
+           addAssistantMessage(
+               message.content
+           );
+   
+       }
+   
+   });
 
     await loadChats();
 
@@ -557,11 +558,38 @@ if (composer) {
 
             hideWelcome();
 
+            let imageUrl = null;
+            
+            /*
+             * Upload selected image before saving
+             * the message.
+             */
+            if (selectedImage) {
+            
+                imageUrl =
+                    await uploadChatImage(
+                        selectedImage
+                    );
+            
+                if (!imageUrl) {
+            
+                    console.error(
+                        "Image could not be uploaded."
+                    );
+            
+                    return;
+                }
+            }
+            
             const messageToSave =
-                   message || `[Image: ${selectedImageName || "attachment"}]`;
-               
-               const savedUserMessage =
-                   await saveUserMessage(messageToSave);
+                message ||
+                `[Image: ${selectedImageName || "attachment"}]`;
+            
+            const savedUserMessage =
+                await saveUserMessage(
+                    messageToSave,
+                    imageUrl
+                );
                
                if (!savedUserMessage) {
                    return;
@@ -631,10 +659,59 @@ if (composer) {
 }
 
 /* =========================================================
+   UPLOAD CHAT IMAGE
+========================================================= */
+
+async function uploadChatImage(file) {
+
+    if (!file || !currentUser || !currentChatId) {
+        return null;
+    }
+
+    const fileExtension =
+        file.name.split(".").pop().toLowerCase();
+
+    const filePath =
+        `${currentUser.id}/${currentChatId}/${crypto.randomUUID()}.${fileExtension}`;
+
+    const {
+        error
+    } = await supabase
+        .storage
+        .from("chat-images")
+        .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false
+        });
+
+    if (error) {
+
+        console.error(
+            "IMAGE UPLOAD ERROR:",
+            error
+        );
+
+        return null;
+    }
+
+    const {
+        data
+    } = supabase
+        .storage
+        .from("chat-images")
+        .getPublicUrl(filePath);
+
+    return data?.publicUrl || null;
+}
+
+/* =========================================================
    SAVE USER MESSAGE
 ========================================================= */
 
-async function saveUserMessage(message) {
+async function saveUserMessage(
+    message,
+    imageUrl = null
+) {
 
     const {
         data,
@@ -645,7 +722,8 @@ async function saveUserMessage(message) {
             chat_id: currentChatId,
             user_id: currentUser.id,
             role: "user",
-            content: message
+            content: message,
+            image_url: imageUrl
         })
         .select()
         .single();
@@ -662,13 +740,15 @@ async function saveUserMessage(message) {
 
     messages.push(data);
 
-    addUserMessage(message);
+    addUserMessage(
+        message,
+        imageUrl
+    );
 
     await updateChatTimestamp();
 
     return data;
 }
-
 /* =========================================================
    SAVE ASSISTANT MESSAGE
 ========================================================= */
@@ -852,7 +932,10 @@ async function deleteChat(chatId) {
    DISPLAY USER MESSAGE
 ========================================================= */
 
-function addUserMessage(message) {
+function addUserMessage(
+    message,
+    imageUrl = null
+) {
 
     const wrapper =
         document.createElement("div");
@@ -860,11 +943,52 @@ function addUserMessage(message) {
     wrapper.className =
         "message-wrapper user-message-wrapper";
 
-    wrapper.innerHTML = `
-        <div class="message user-message">
-            ${escapeHTML(message)}
-        </div>
-    `;
+    const messageElement =
+        document.createElement("div");
+
+    messageElement.className =
+        "message user-message";
+
+    if (imageUrl) {
+
+        const image =
+            document.createElement("img");
+
+        image.src = imageUrl;
+
+        image.alt =
+            "Attached image";
+
+        image.className =
+            "user-message-image";
+
+        image.loading =
+            "lazy";
+
+        messageElement.appendChild(
+            image
+        );
+    }
+
+    if (message) {
+
+        const text =
+            document.createElement("div");
+
+        text.className =
+            "user-message-text";
+
+        text.textContent =
+            message;
+
+        messageElement.appendChild(
+            text
+        );
+    }
+
+    wrapper.appendChild(
+        messageElement
+    );
 
     chatArea.insertBefore(
         wrapper,
