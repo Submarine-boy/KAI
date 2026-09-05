@@ -1124,3 +1124,35 @@ a {
         z-index: 100 !important;
     }
 }
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        left: -280px;
+        z-index: 1000;
+        transition: left 0.25s ease;
+    }
+
+    .sidebar.mobile-sidebar-open {
+        left: 0;
+    }
+
+    /*
+       Hide the composer while the mobile
+       sidebar is open.
+    */
+    body.sidebar-is-open .composer-container {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /*
+       Make absolutely sure the sidebar
+       sits above the chat UI.
+    */
+    body.sidebar-is-open .sidebar {
+        z-index: 1000;
+    }
+
+}
