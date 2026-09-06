@@ -581,6 +581,26 @@ if (composer) {
                 }
             }
             
+            let imageUrl = null;
+            
+            if (selectedImage) {
+            
+                imageUrl =
+                    await uploadChatImage(
+                        selectedImage,
+                        selectedImageName
+                    );
+            
+                if (!imageUrl) {
+            
+                    console.error(
+                        "Image could not be uploaded."
+                    );
+            
+                    return;
+                }
+            }
+            
             const messageToSave =
                 message ||
                 `[Image: ${selectedImageName || "attachment"}]`;
@@ -590,6 +610,10 @@ if (composer) {
                     messageToSave,
                     imageUrl
                 );
+            
+            if (!savedUserMessage) {
+                return;
+            }
                
                if (!savedUserMessage) {
                    return;
@@ -662,46 +686,83 @@ if (composer) {
    UPLOAD CHAT IMAGE
 ========================================================= */
 
-async function uploadChatImage(file) {
+async function uploadChatImage(dataUrl, fileName) {
 
-    if (!file || !currentUser || !currentChatId) {
+    if (!dataUrl || !currentUser || !currentChatId) {
         return null;
     }
 
-    const fileExtension =
-        file.name.split(".").pop().toLowerCase();
+    try {
 
-    const filePath =
-        `${currentUser.id}/${currentChatId}/${crypto.randomUUID()}.${fileExtension}`;
+        /*
+         * Convert the base64/data URL from the
+         * image picker into binary data.
+         */
+        const response =
+            await fetch(dataUrl);
 
-    const {
-        error
-    } = await supabase
-        .storage
-        .from("chat-images")
-        .upload(filePath, file, {
-            cacheControl: "3600",
-            upsert: false
-        });
+        const blob =
+            await response.blob();
 
-    if (error) {
+        const extension =
+            fileName
+                ?.split(".")
+                .pop()
+                ?.toLowerCase() || "jpg";
+
+        const filePath =
+            `${currentUser.id}/${currentChatId}/${crypto.randomUUID()}.${extension}`;
+
+        const {
+            error
+        } = await supabase
+            .storage
+            .from("chat-images")
+            .upload(
+                filePath,
+                blob,
+                {
+                    contentType:
+                        blob.type || "image/jpeg",
+
+                    cacheControl:
+                        "3600",
+
+                    upsert:
+                        false
+                }
+            );
+
+        if (error) {
+
+            console.error(
+                "IMAGE UPLOAD ERROR:",
+                error
+            );
+
+            return null;
+        }
+
+        const {
+            data
+        } = supabase
+            .storage
+            .from("chat-images")
+            .getPublicUrl(
+                filePath
+            );
+
+        return data?.publicUrl || null;
+
+    } catch (error) {
 
         console.error(
-            "IMAGE UPLOAD ERROR:",
+            "IMAGE PROCESSING ERROR:",
             error
         );
 
         return null;
     }
-
-    const {
-        data
-    } = supabase
-        .storage
-        .from("chat-images")
-        .getPublicUrl(filePath);
-
-    return data?.publicUrl || null;
 }
 
 /* =========================================================
