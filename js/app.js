@@ -592,10 +592,6 @@ if (composer) {
                 return;
             }
                
-               if (!savedUserMessage) {
-                   return;
-               }
-
             showTypingIndicator();
 
             try {
@@ -1319,7 +1315,7 @@ function closeMobileSidebar() {
         "sidebar-is-open"
     );
 }
-}
+
 
 /* =========================================================
    HELPERS
