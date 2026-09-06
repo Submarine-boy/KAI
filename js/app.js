@@ -560,6 +560,11 @@ if (composer) {
             
             let imageUrl = null;
             
+            /*
+             * Upload a copy of the image for chat history.
+             * If storage upload fails, don't prevent KAI
+             * from processing the image.
+             */
             if (selectedImage) {
             
                 imageUrl =
@@ -569,12 +574,9 @@ if (composer) {
                     );
             
                 if (!imageUrl) {
-            
-                    console.error(
-                        "Image could not be uploaded."
+                    console.warn(
+                        "Image could not be saved to chat history. Continuing with KAI."
                     );
-            
-                    return;
                 }
             }
             
@@ -591,7 +593,7 @@ if (composer) {
             if (!savedUserMessage) {
                 return;
             }
-               
+            
             showTypingIndicator();
 
             try {
