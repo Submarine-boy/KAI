@@ -557,29 +557,6 @@ if (composer) {
             autoResize();
 
             hideWelcome();
-
-            let imageUrl = null;
-            
-            /*
-             * Upload selected image before saving
-             * the message.
-             */
-            if (selectedImage) {
-            
-                imageUrl =
-                    await uploadChatImage(
-                        selectedImage
-                    );
-            
-                if (!imageUrl) {
-            
-                    console.error(
-                        "Image could not be uploaded."
-                    );
-            
-                    return;
-                }
-            }
             
             let imageUrl = null;
             
