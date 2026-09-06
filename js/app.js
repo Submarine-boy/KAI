@@ -1015,7 +1015,8 @@ function addUserMessage(
         const image =
             document.createElement("img");
 
-        image.src = imageUrl;
+        image.src =
+            imageUrl;
 
         image.alt =
             "Attached image";
@@ -1060,7 +1061,6 @@ function addUserMessage(
 
     scrollToBottom();
 }
-
 /* =========================================================
    DISPLAY ASSISTANT MESSAGE
 ========================================================= */
