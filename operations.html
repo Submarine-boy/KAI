@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>KIA Operations</title><link rel="icon" type="image/png" href="icon.png"><link rel="stylesheet" href="operations.css"><script type="module" src="js/auth-guard.js"></script>
+</head>
+<body>
+<div class="operations-shell">
+<aside class="operations-sidebar"><a class="brand" href="nova.html"><span class="brand-mark">K</span><span>KIA</span></a><p class="eyebrow">CONTROL CENTER</p><nav><a href="workspace.html">Workspace</a><a class="active" href="operations.html">Operations</a><a href="knowledge.html">Knowledge</a><a href="conversations.html">Memory</a></nav><div class="sidebar-bottom"><a href="nova.html">← Back to KIA chat</a><button id="logout">Log out</button></div></aside>
+<main class="operations-main">
+<header class="topbar"><div><p class="eyebrow">NOETICA EXECUTION CONTROL</p><h1>Operations</h1><p>Review decisions that require authorization and inspect execution history.</p></div><button id="refresh" class="secondary">Refresh</button></header>
+<section class="metrics"><article><span>Pending approvals</span><strong id="pending-count">—</strong></article><article><span>Approved</span><strong id="approved-count">—</strong></article><article><span>Rejected</span><strong id="rejected-count">—</strong></article><article><span>Recent executions</span><strong id="execution-count">—</strong></article></section>
+<section class="panel"><div class="panel-head"><div><h2>Approval queue</h2><p>Only authorized approvers can review these requests.</p></div><select id="approval-filter"><option value="pending">Pending</option><option value="all">All</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div><div id="approval-list" class="approval-list"></div><div id="approval-empty" class="empty" hidden>No approval requests found.</div></section>
+<section class="panel"><div class="panel-head"><div><h2>Execution history</h2><p>Recent actions, results and authorization state.</p></div></div><div class="table-wrap"><table><thead><tr><th>Tool</th><th>Status</th><th>Permission</th><th>Approval</th><th>Started</th><th>Completed</th></tr></thead><tbody id="execution-table"></tbody></table></div><div id="execution-empty" class="empty" hidden>No execution records found.</div></section>
+</main></div>
+<dialog id="review-dialog"><form id="review-form"><button type="button" class="close" id="close-review">×</button><p class="eyebrow">APPROVAL REVIEW</p><h2 id="review-title">Review request</h2><p id="review-reason" class="muted"></p><label>Review note<textarea id="review-note" rows="4" maxlength="1000" placeholder="Optional reason or review note"></textarea></label><div class="actions"><button type="button" class="secondary" id="reject">Reject</button><button type="submit" class="primary">Approve</button></div></form></dialog>\div><div id="toast" role="status" aria-live="polite"></div><script type="module" src="js/operations.js"></script>
+</body></html>
