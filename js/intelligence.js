@@ -49,6 +49,10 @@ supabase.functions.invoke = async (functionName, options = {}) => {
                 ...result.data.intelligence.decision,
                 ...actionPlan
             };
+
+            window.dispatchEvent(new CustomEvent("kia-action-plan", {
+                detail: actionPlan
+            }));
         } else if (actionPlanError) {
             console.warn("KIA action plan could not be loaded:", actionPlanError);
         }
