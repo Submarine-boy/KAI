@@ -24,8 +24,35 @@ supabase.functions.invoke = async (functionName, options = {}) => {
         body.chat_id = activeChat.dataset.chatId;
     }
 
-    return originalInvoke("kia-intelligence", {
+    const result = await originalInvoke("kia-intelligence", {
         ...options,
         body
     });
+
+    /*
+     * `kia-intelligence` records decisions server-side. The decision trigger
+     * may then attach a verified action plan. Fetch that plan after the
+     * function returns so the existing chat response can expose the plan
+     * without changing the stable Edge Function response contract.
+     */
+    if (!result.error && result.data?.intelligence?.decision?.id) {
+        const decisionId = result.data.intelligence.decision.id;
+
+        const { data: actionPlan, error: actionPlanError } = await supabase
+            .from("intelligence_decisions")
+            .select("id, decision_type, requires_approval, approval_status, status, action_plan")
+            .eq("id", decisionId)
+            .maybeSingle();
+
+        if (!actionPlanError && actionPlan) {
+            result.data.intelligence.decision = {
+                ...result.data.intelligence.decision,
+                ...actionPlan
+            };
+        } else if (actionPlanError) {
+            console.warn("KIA action plan could not be loaded:", actionPlanError);
+        }
+    }
+
+    return result;
 };
