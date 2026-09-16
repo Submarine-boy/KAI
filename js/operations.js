@@ -57,11 +57,41 @@ function openReview(id) {
   $("#review-dialog").showModal();
 }
 
+async function executeApprovedRun(executionRunId) {
+  const { data, error } = await supabase.functions.invoke("kia-execute", {
+    body: {
+      tool_name: "execution.record",
+      execution_run_id: executionRunId,
+      input: { execution_run_id: executionRunId }
+    }
+  });
+  if (error) throw error;
+  if (!data?.success) throw new Error(data?.error || "Approved execution could not be completed.");
+  return data;
+}
+
 async function review(statusValue) {
   if (!state.selected) return;
-  const { data, error } = await supabase.rpc("kia_review_execution_approval", { p_approval_id: state.selected.id, p_status: statusValue, p_reason: $("#review-note").value.trim() || null });
+  const approvalId = state.selected.id;
+  const executionRunId = state.selected.execution_run_id;
+  const { data, error } = await supabase.rpc("kia_review_execution_approval", { p_approval_id: approvalId, p_status: statusValue, p_reason: $("#review-note").value.trim() || null });
   if (error) { toast(error.message); return; }
-  $("#review-dialog").close(); state.selected = null; toast(statusValue === "approved" ? "Execution approved" : "Execution rejected"); await Promise.all([loadApprovals(), loadExecutions()]);
+  $("#review-dialog").close(); state.selected = null;
+
+  if (statusValue === "approved") {
+    toast("Execution approved — completing execution");
+    try {
+      await executeApprovedRun(executionRunId);
+      toast("Execution approved and completed");
+    } catch (executionError) {
+      console.error("Approved execution failed", executionError);
+      toast(executionError.message || "Approval saved, but execution failed.");
+    }
+  } else {
+    toast("Execution rejected");
+  }
+
+  await Promise.all([loadApprovals(), loadExecutions()]);
   console.log("Approval review", data);
 }
 
