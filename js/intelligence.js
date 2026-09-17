@@ -3,10 +3,9 @@ import { supabase } from "./supabase.js";
 /*
  * Intelligence Router bridge.
  *
- * The existing chat UI still calls `swift-task`. We intentionally keep
- * that interface stable and route the request through the new
- * `kia-intelligence` orchestration layer instead of rewriting the working
- * chat workflow.
+ * The existing chat UI still calls `swift-task`. We route that request
+ * through `kia-intelligence` first, while keeping the proven `swift-task`
+ * path as a safe fallback if orchestration is unavailable.
  */
 const originalInvoke = supabase.functions.invoke.bind(supabase.functions);
 
@@ -24,10 +23,30 @@ supabase.functions.invoke = async (functionName, options = {}) => {
         body.chat_id = activeChat.dataset.chatId;
     }
 
-    const result = await originalInvoke("kia-intelligence", {
-        ...options,
-        body
-    });
+    let result;
+
+    try {
+        result = await originalInvoke("kia-intelligence", {
+            ...options,
+            body
+        });
+    } catch (error) {
+        console.warn("KIA orchestration failed; falling back to swift-task:", error);
+        return originalInvoke("swift-task", options);
+    }
+
+    /*
+     * If the orchestration layer returns an HTTP/function error or an empty
+     * response, fall back to the existing AI function instead of leaving the
+     * composer with no usable reply.
+     */
+    if (result.error || !result.data?.response) {
+        console.warn(
+            "KIA orchestration returned no usable response; falling back to swift-task.",
+            result.error || result.data
+        );
+        return originalInvoke("swift-task", options);
+    }
 
     /*
      * `kia-intelligence` records decisions server-side. The decision trigger
@@ -35,7 +54,7 @@ supabase.functions.invoke = async (functionName, options = {}) => {
      * function returns so the existing chat response can expose the plan
      * without changing the stable Edge Function response contract.
      */
-    if (!result.error && result.data?.intelligence?.decision?.id) {
+    if (result.data?.intelligence?.decision?.id) {
         const decisionId = result.data.intelligence.decision.id;
 
         const { data: actionPlan, error: actionPlanError } = await supabase
