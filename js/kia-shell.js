@@ -1,0 +1,11 @@
+const navItems=[['⌂','Home','nova.html'],['◉','Google Meet','meet.html'],['◌','Team Contributions','team-contributions.html'],['↗','Activity','activity.html'],['⌘','Tools','tools.html'],['◇','Knowledge','knowledge.html'],['◈','Memory','memory.html'],['▤','Conversations','conversations.html']];
+const current=location.pathname.split('/').pop()||'nova.html';
+const shell=document.querySelector('[data-kia-shell]');
+if(shell){
+  shell.classList.add('kia-app-shell');
+  const content=shell.innerHTML;
+  shell.innerHTML=`<aside class="kia-shell-sidebar"><a class="kia-shell-brand" href="nova.html"><span class="kia-shell-brand-mark">K</span>KIA</a><nav class="kia-shell-nav" aria-label="KIA workspace">${navItems.map(([icon,label,href])=>`<a href="${href}" class="${current===href?'active':''}" ${current===href?'aria-current="page"':''}><span>${icon}</span><span>${label}</span></a>`).join('')}</nav><div class="kia-shell-footer"><a class="kia-shell-settings ${current==='settings.html'?'active':''}" href="settings.html"><span>⚙</span><span>Settings</span></a><div class="kia-shell-user"><span class="kia-shell-avatar" id="kia-shell-avatar">U</span><div><strong id="kia-shell-name">KIA Staff</strong><small id="kia-shell-email">Signed in</small></div></div></div></aside><main class="kia-shell-main"><button class="kia-shell-mobile-toggle" type="button" aria-label="Open navigation" id="kia-shell-toggle">☰</button><div class="kia-shell-content">${content}</div></main>`;
+  document.getElementById('kia-shell-toggle')?.addEventListener('click',()=>document.body.classList.toggle('kia-sidebar-open'));
+  document.querySelector('.kia-shell-main')?.addEventListener('click',e=>{if(window.innerWidth<=900&&!e.target.closest('#kia-shell-toggle'))document.body.classList.remove('kia-sidebar-open')});
+  import('./supabase.js').then(async({supabase})=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;const name=user.user_metadata?.full_name||user.email?.split('@')[0]||'KIA Staff';const initial=name.trim().charAt(0).toUpperCase()||'U';document.getElementById('kia-shell-name').textContent=name;document.getElementById('kia-shell-email').textContent=user.email||'Signed in';document.getElementById('kia-shell-avatar').textContent=initial;}).catch(()=>{});
+}
